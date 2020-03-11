@@ -1,0 +1,78 @@
+name: build
+
+on:
+  push:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.*'
+      - '*/README.*'
+      - 'docs/*'
+  release:
+    types: [published]
+
+env:
+  APP_NAME: nimbot
+
+jobs:
+  skip:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skip job"
+
+  before:
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - run: echo "no [skip ci]"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: before
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build app
+        run: docker-compose -f .github/docker-compose-builder.yml run ${{ env.APP_NAME }}
+      - name: Check apps
+        run: ls -lah bin/
+      - name: Archive release files
+        run: |
+          mkdir -p dist/${{ env.APP_NAME }}
+          cp -r bin dist/${{ env.APP_NAME }}
+          git describe --tags --abbrev=0 > dist/${{ env.APP_NAME }}/tag.txt
+          pushd dist
+          tar czf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
+          popd
+          ls -lah dist/${{ env.APP_NAME }}.tar.gz
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: app
+          path: dist/${{ env.APP_NAME }}.tar.gz
+        if: startsWith(github.ref, 'refs/tags/')
+
+  create-tag-draft:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    steps:
+      - uses: release-drafter/release-drafter@v5.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: app
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/${{ env.APP_NAME }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Deploy app
+      #   run: curl ${{ secrets.DEPLOY_URL }}

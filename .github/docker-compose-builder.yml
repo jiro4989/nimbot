@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  nimbot:
+    image: nimlang/nim:1.0.6-ubuntu
+    volumes:
+      - "../:/nimbot"
+    working_dir: /nimbot
+    entrypoint: "nimble build -Y"
