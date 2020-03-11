@@ -5,7 +5,6 @@ import jester
 
 router myrouter:
   post "/play":
-
     let
       scriptDir = getCurrentDir() / "tmp" / "script"
       scriptFile = scriptDir / "main.nim"
@@ -19,6 +18,7 @@ router myrouter:
         body = paramMap.filterIt(it[0] == "text")[0][1].decodeUrl(true)
       writeFile(scriptFile, body)
       resp %*{"status":"ok"}
+
   get "/ping":
     resp %*{"status":"ok"}
 
