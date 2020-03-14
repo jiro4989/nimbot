@@ -83,7 +83,7 @@ while true:
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
 
     let rawBody = @[
-      &"@{userName}",
+      &"<@{userName}>",
       "*code:*", "```", code, "```",
       "*stdout:*", "```", stdout, "```",
       "*stderr:*", "```", stderr, "```",
