@@ -20,7 +20,7 @@ router myrouter:
         param = request.body()
         paramMap = param.split("&").mapIt(it.split("="))
         body = paramMap.getParam("text")
-        userName = paramMap.getParam("user_name")
+        userName = paramMap.getParam("user_id")
       writeFile(scriptFile, body)
       writeFile(userNameFile, userName)
       resp %*{"status":"ok"}
