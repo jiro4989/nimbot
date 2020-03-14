@@ -1,0 +1,36 @@
+@startuml
+
+actor User as user
+participant Slack as slack
+participant nimbot_server as server
+participant nimbot_executor as exec
+participant Docker as container
+database FileSystem as fs
+
+activate exec
+
+user -> slack : Send "/nimbot" text
+activate slack
+slack -> server : POST WebhookURL of my server
+activate server
+server -> fs : Save a text of POST data
+activate fs
+server -> slack : Response "ok"
+deactivate server
+slack -> user : "ok"
+deactivate slack
+
+alt when a file exists
+    exec -> fs : Read a code
+    exec -> container : docker run
+    activate container
+    container -> container : nim c -r main.nim
+    container -> exec : Return stdout/stderr
+    deactivate container
+    exec -> slack : POST to incomming webhook
+    exec -> fs : Remove
+    deactivate fs
+    slack -> user : Print code/stdout/stderr
+end
+
+@enduml
