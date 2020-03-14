@@ -64,25 +64,29 @@ proc runCommandOnContainer(scriptFile, containerName: string): (string, string, 
   let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
   result = runCommand("docker", args, timeout)
 
-let scriptDir = getCurrentDir() / "tmp" / "script"
-let scriptFile = scriptDir / "main.nim"
+let
+  scriptDir = getCurrentDir() / "tmp" / "script"
+  scriptFile = scriptDir / "main.nim"
+  userNameFile = scriptDir / "user.txt"
 
 while true:
   sleep 500
 
-  if not existsFile(scriptFile):
-    info &"'{scriptFile}' was not existed"
+  if (not existsFile(scriptFile)) or (not existsFile(userNameFile)):
     continue
 
   try:
-    let code = readFile(scriptFile)
-    let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, "nimlang/nim")
+    let
+      userName = readFile(userNameFile)
+      code = readFile(scriptFile)
+      (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, "nimlang/nim")
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
 
     let rawBody = @[
+      &"@{userName}",
       "*code:*", "```", code, "```",
-      "*stdout:*", stdout,
-      "*stderr:*", stderr,
+      "*stdout:*", "```", stdout, "```",
+      "*stderr:*", "```", stderr, "```",
     ].join("\n")
     let body = %*{ "text":rawBody }
 
@@ -93,3 +97,4 @@ while true:
     error getCurrentExceptionMsg()
   finally:
     removeFile(scriptFile)
+    removeFile(userNameFile)

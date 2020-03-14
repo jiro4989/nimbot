@@ -3,11 +3,15 @@ from uri import decodeUrl
 
 import jester
 
+proc getParam(p: seq[seq[string]], key: string): string =
+  result = p.filterIt(it[0] == key)[0][1].decodeUrl(true)
+
 router myrouter:
   post "/play":
     let
       scriptDir = getCurrentDir() / "tmp" / "script"
       scriptFile = scriptDir / "main.nim"
+      userNameFile = scriptDir / "user.txt"
 
     if existsFile(scriptFile):
       resp %*{"status":"他の方が実行中です"}
@@ -15,8 +19,10 @@ router myrouter:
       let
         param = request.body()
         paramMap = param.split("&").mapIt(it.split("="))
-        body = paramMap.filterIt(it[0] == "text")[0][1].decodeUrl(true)
+        body = paramMap.getParam("text")
+        userName = paramMap.getParam("user_name")
       writeFile(scriptFile, body)
+      writeFile(userNameFile, userName)
       resp %*{"status":"ok"}
 
   get "/ping":
