@@ -26,18 +26,28 @@ proc getParam(p: seq[seq[string]], key: string): string =
 proc getCodeBlock(lines: openArray[string]): string =
   ## コードブロック記法がくくられてるエリアの文字列のみを取得する。
   ## コードブロック文字自体は返さない。
-  var getFlag: bool
+  if lines.len <= 1:
+    return lines.join.strip(chars={'`'})
   var codeLines: seq[string]
-  for line in lines:
-    if line.strip.startsWith("```"):
-      if not getFlag:
-        getFlag = not getFlag
-        continue
-      else:
-        break
-    if getFlag:
+  var startLinePos, endLinePos: int
+  var startFlag: bool
+  for i, line in lines:
+    if (not startFlag) and line.strip.startsWith("```"):
+      startLinePos = i
+      startFlag = true
+      continue
+    if line.strip.endsWith("```"):
+      endLinePos = i
+
+  for i, line in lines:
+    var line = line
+    if i == startLinePos:
+      line = line.strip(leading=true, chars={'`'})
+    if i == endLinePos:
+      line = line.strip(trailing=true, chars={'`'})
+    if startLinePos <= i and i <= endLinePos:
       codeLines.add(line)
-  result = codeLines.join("\n")
+  result = codeLines.join("\n").strip
 
 router myrouter:
   post "/play":
