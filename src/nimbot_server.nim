@@ -29,7 +29,7 @@ proc getCodeBlock(lines: openArray[string]): string =
   var getFlag: bool
   var codeLines: seq[string]
   for line in lines:
-    if line.startsWith("```"):
+    if line.strip.startsWith("```"):
       if not getFlag:
         getFlag = not getFlag
         continue
@@ -51,6 +51,8 @@ router myrouter:
       text = paramMap.getParam("text")
       userName = paramMap.getParam("user_id")
       lines = text.split("\n")
+
+    echo &"text = {text}"
 
     if lines.len < 1:
       resp %*{"status":"illegal commands. see '/nimbot help'."}
