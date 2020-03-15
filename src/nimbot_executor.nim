@@ -79,7 +79,7 @@ while true:
       userId = $obj["userId"]
       code = $obj["code"]
       tag = $obj["compiler"]
-      image = &"nimlang/nim:{tag}"
+      image = &"jiro4989/nimbot/runtime:{tag}"
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
