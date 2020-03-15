@@ -76,9 +76,9 @@ while true:
   try:
     let
       obj = readFile(paramFile).parseJson
-      userId = $obj["userId"]
-      code = $obj["code"]
-      tag = $obj["compiler"]
+      userId = obj["userId"].getStr
+      code = obj["code"].getStr
+      tag = obj["compiler"].getStr
       image = &"jiro4989/nimbot/runtime:{tag}"
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
