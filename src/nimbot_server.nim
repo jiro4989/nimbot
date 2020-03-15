@@ -13,15 +13,31 @@ nimbot is a toy bot for Nim user.
 *Usage:*
 1. compile and execute code. you can use `/nimbot <c | compiler> [devel]`.
 
-```
 /nimbot compiler
 
+```
 echo "hello"
 ```
 """
 
 proc getParam(p: seq[seq[string]], key: string): string =
   result = p.filterIt(it[0] == key)[0][1].decodeUrl(true)
+
+proc getCodeBlock(lines: openArray[string]): string =
+  ## コードブロック記法がくくられてるエリアの文字列のみを取得する。
+  ## コードブロック文字自体は返さない。
+  var getFlag: bool
+  var codeLines: seq[string]
+  for line in lines:
+    if line.startsWith("```"):
+      if not getFlag:
+        getFlag = not getFlag
+        continue
+      else:
+        break
+    if getFlag:
+      codeLines.add(line)
+  result = codeLines.join("\n")
 
 router myrouter:
   post "/play":
@@ -52,7 +68,7 @@ router myrouter:
           resp %*{"status": &"illegal compiler: {args[1]}"}
           return
       let
-        code = lines[1..^1].join("\n")
+        code = lines[1..^1].getCodeBlock()
         param = %*{ "userId": userName, "compiler": tag, "code": code }
       writeFile(paramFile, $param)
       resp %*{"status":"ok"}
