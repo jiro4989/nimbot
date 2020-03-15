@@ -94,7 +94,7 @@ jobs:
       - name: Release docker image
         uses: softprops/action-gh-release@v1
         with:
-          files: dockerimage.tar.gz
+          files: dist/dockerimage.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
