@@ -1,4 +1,7 @@
 import httpClient, json, os, osproc, strutils, strformat, streams, logging
+from strformat import `&`
+
+import private/common
 
 addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
 
@@ -64,26 +67,25 @@ proc runCommandOnContainer(scriptFile, containerName: string): (string, string, 
   let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
   result = runCommand("docker", args, timeout)
 
-let
-  scriptDir = getCurrentDir() / "tmp" / "script"
-  scriptFile = scriptDir / "main.nim"
-  userNameFile = scriptDir / "user.txt"
-
 while true:
   sleep 500
 
-  if (not existsFile(scriptFile)) or (not existsFile(userNameFile)):
+  if not existsFile(paramFile):
     continue
 
   try:
     let
-      userName = readFile(userNameFile)
-      code = readFile(scriptFile)
-      (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, "nimlang/nim")
+      obj = readFile(paramFile).parseJson
+      userId = $obj["userId"]
+      code = $obj["code"]
+      tag = $obj["compiler"]
+      image = &"nimlang/nim:{tag}"
+    writeFile(scriptFile, code)
+    let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
 
     let rawBody = @[
-      &"<@{userName}>",
+      &"<@{userId}>",
       "*code:*", "```", code, "```",
       "*stdout:*", "```", stdout, "```",
       "*stderr:*", "```", stderr, "```",
@@ -96,5 +98,5 @@ while true:
   except:
     error getCurrentExceptionMsg()
   finally:
+    removeFile(paramFile)
     removeFile(scriptFile)
-    removeFile(userNameFile)
