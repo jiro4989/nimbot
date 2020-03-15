@@ -23,31 +23,20 @@ echo "hello"
 proc getParam(p: seq[seq[string]], key: string): string =
   result = p.filterIt(it[0] == key)[0][1].decodeUrl(true)
 
-proc getCodeBlock(lines: openArray[string]): string =
+proc getCodeBlock(raw: string): string =
   ## コードブロック記法がくくられてるエリアの文字列のみを取得する。
   ## コードブロック文字自体は返さない。
-  if lines.len <= 1:
-    return lines.join.strip(chars={'`'})
-  var codeLines: seq[string]
-  var startLinePos, endLinePos: int
   var startFlag: bool
-  for i, line in lines:
-    if (not startFlag) and line.strip.startsWith("```"):
-      startLinePos = i
+  for i, c in raw:
+    if i < 2:
+      continue
+    if raw[i-2..i] == "```":
+      if startFlag:
+        break
       startFlag = true
       continue
-    if line.strip.endsWith("```"):
-      endLinePos = i
-
-  for i, line in lines:
-    var line = line
-    if i == startLinePos:
-      line = line.strip(leading=true, chars={'`'})
-    if i == endLinePos:
-      line = line.strip(trailing=true, chars={'`'})
-    if startLinePos <= i and i <= endLinePos:
-      codeLines.add(line)
-  result = codeLines.join("\n").strip
+    result.add(c)
+  result = result.strip(chars={'`'})
 
 router myrouter:
   post "/play":
@@ -80,7 +69,7 @@ router myrouter:
           resp %*{"status": &"illegal compiler: {args[1]}"}
           return
       let
-        code = lines[1..^1].getCodeBlock()
+        code = text.getCodeBlock()
         param = %*{ "userId": userName, "compiler": tag, "code": code }
       writeFile(paramFile, $param)
       resp %*{"status":"ok"}

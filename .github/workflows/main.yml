@@ -76,27 +76,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # NOTE: ちょっと時間かかるけれど、一旦はここでビルドする
-      - uses: actions/checkout@v1
-      - name: Build images latest
-        run: docker build -f Dockerfile -t ${{ env.IMAGE }}:latest .
-      - name: Build images devel
-        run: docker build -f Dockerfile_devel -t ${{ env.IMAGE }}:devel .
-      - name: Release docker images
-        run: |
-          mkdir -p dist/dockerimage
-          docker save ${{ env.IMAGE }}:latest -o dist/dockerimage/latest.tar
-          docker save ${{ env.IMAGE }}:devel -o dist/dockerimage/devel.tar
-          pushd dist
-          tar czf dockerimage.tar.gz dockerimage
-          popd
-          ls -lah dist
-      - name: Release docker image
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/dockerimage.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # # NOTE: ちょっと時間かかるけれど、一旦はここでビルドする
+      # - uses: actions/checkout@v1
+      # - name: Build images latest
+      #   run: docker build -f Dockerfile -t ${{ env.IMAGE }}:latest .
+      # - name: Build images devel
+      #   run: docker build -f Dockerfile_devel -t ${{ env.IMAGE }}:devel .
+      # - name: Release docker images
+      #   run: |
+      #     mkdir -p dist/dockerimage
+      #     docker save ${{ env.IMAGE }}:latest -o dist/dockerimage/latest.tar
+      #     docker save ${{ env.IMAGE }}:devel -o dist/dockerimage/devel.tar
+      #     pushd dist
+      #     tar czf dockerimage.tar.gz dockerimage
+      #     popd
+      #     ls -lah dist
+      # - name: Release docker image
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: dist/dockerimage.tar.gz
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy app
         run: curl -X POST -H "${{ env.HEADER }}" -d '${{ env.BODY }}' ${{ secrets.DEPLOY_URL }}
