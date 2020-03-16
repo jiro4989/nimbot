@@ -26,17 +26,17 @@ proc getParam(p: seq[seq[string]], key: string): string =
 proc getCodeBlock(raw: string): string =
   ## コードブロック記法がくくられてるエリアの文字列のみを取得する。
   ## コードブロック文字自体は返さない。
-  var startFlag: bool
+  var startPos, endPos: int
   for i, c in raw:
-    if i < 2:
-      continue
-    if raw[i-2..i] == "```":
-      if startFlag:
-        break
-      startFlag = true
-      continue
-    result.add(c)
-  result = result.strip(chars={'`'})
+    if c == '`':
+      startPos = i
+      break
+  for i in countdown(raw.len-1, 0):
+    let c = raw[i]
+    if c == '`':
+      endPos = i
+      break
+  result = raw[startPos..endPos].strip(chars={'`'})
 
 router myrouter:
   post "/play":
@@ -51,6 +51,7 @@ router myrouter:
       userName = paramMap.getParam("user_id")
       lines = text.split("\n")
 
+    echo &"param = {param}"
     echo &"text = {text}"
 
     if lines.len < 1:
