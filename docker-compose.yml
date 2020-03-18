@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  server: &common
+    image: nimlang/nim:1.0.6-ubuntu
+    volumes:
+      - ".:/work"
+    working_dir: /work
+    entrypoint: "./entrypoint.sh nimbot_server"
+    ports:
+      - 4001:4001
+
+  executor:
+    <<: *common
+    entrypoint: "./entrypoint.sh nimbot_executor"
+
+  db:
+    image: mongo:3.6
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    expose:
+      - "27017"
+    ports:
+      - 27017:27017
+    volumes:
+      - ./volume/db:/data/db
+      - ./volume/configdb:/data/configdb

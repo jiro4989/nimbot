@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  server: &common
+    image: jiro4989/nimbot/server
+    entrypoint: "./entrypoint.sh nimbot_server"
+
+  executor:
+    image: jiro4989/nimbot/executor
+    entrypoint: "./entrypoint.sh nimbot_executor"
