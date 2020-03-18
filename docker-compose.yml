@@ -6,12 +6,13 @@ services:
     volumes:
       - ".:/work"
     working_dir: /work
-    entrypoint: "./entrypoint.sh nimbot_server"
     ports:
       - 4001:4001
+    entrypoint: "./entrypoint.sh nimbot_server"
 
   executor:
     <<: *common
+    ports: []
     entrypoint: "./entrypoint.sh nimbot_executor"
 
   db:
