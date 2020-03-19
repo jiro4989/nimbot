@@ -3,16 +3,24 @@ version: "3"
 services:
   server: &common
     image: nimlang/nim:1.0.6-ubuntu
+    environment:
+      NIMBOT_SERVER_DB_HOST: http://db
+      NIMBOT_SERVER_DB_PORT: '27017'
     volumes:
       - ".:/work"
     working_dir: /work
     ports:
       - 4001:4001
+    depends_on:
+      - db
+      - executor
     entrypoint: "./entrypoint.sh nimbot_server"
 
   executor:
     <<: *common
     ports: []
+    depends_on:
+      - db
     entrypoint: "./entrypoint.sh nimbot_executor"
 
   db:
