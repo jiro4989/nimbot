@@ -71,17 +71,19 @@ router myrouter:
           return
       let
         code = text.getCodeBlock()
-        param = json.`%*`({ "userId": userName, "compiler": tag, "code": code })
-      writeFile(paramFile, $param)
+
+      let
+        dbHost = getEnv("NIMBOT_SERVER_DB_HOST")
+        dbPort = getEnv("NIMBOT_SERVER_DB_PORT").parseUint.uint16
+      var
+        mongoClient = newMongo(host=dbHost, port=dbPort)
+      let
+        connectResult = mongoClient.connect()
+        collection = mongoClient["db"]["code"]
+        record = bson.`%*`({"userId": userName, "compiler": tag, "code": code})
+        insertResult = collection.insert(record)
       resp json.`%*`({"status":"ok"})
       return
-
-    let dbHost = getEnv("NIMBOT_SERVER_DB_HOST")
-    let dbPort = getEnv("NIMBOT_SERVER_DB_PORT").parseUint.uint16
-    var mongoClient = newMongo(host=dbHost, port=dbPort)
-    let connectResult = mongoClient.connect()
-    let collection = m["db"]["code"]
-    let insertResult = collection.insert(%*{"userId": userName, "compiler": tag, "code": code})
 
     if args[0] in ["help", "h"]:
       resp helpMsg.strip
