@@ -13,3 +13,4 @@ binDir        = "bin"
 
 requires "nim >= 1.0.6"
 requires "jester >= 0.4.3"
+requires "nimongo#6b518eb3792876aaf496aede5005f43f5e3d095d"

@@ -2,7 +2,7 @@ import asyncdispatch, httpClient, json, os, strutils, sequtils
 from uri import decodeUrl
 from strformat import `&`
 
-import jester
+import jester, nimongo.bson, nimongo.mongo
 
 import private/common
 
@@ -41,7 +41,7 @@ proc getCodeBlock(raw: string): string =
 router myrouter:
   post "/play":
     if existsFile(scriptFile):
-      resp %*{"status":"other user is using. wait a second."}
+      resp json.`%*`({"status":"other user is using. wait a second."})
       return
 
     let
@@ -55,7 +55,7 @@ router myrouter:
     echo &"text = {text}"
 
     if lines.len < 1:
-      resp %*{"status":"illegal commands. see '/nimbot help'."}
+      resp json.`%*`({"status":"illegal commands. see '/nimbot help'."})
       return
 
     let
@@ -67,23 +67,23 @@ router myrouter:
         if args[1] == "devel":
           tag = "devel"
         else:
-          resp %*{"status": &"illegal compiler: {args[1]}"}
+          resp json.`%*`({"status": &"illegal compiler: {args[1]}"})
           return
       let
         code = text.getCodeBlock()
-        param = %*{ "userId": userName, "compiler": tag, "code": code }
+        param = json.`%*`({ "userId": userName, "compiler": tag, "code": code })
       writeFile(paramFile, $param)
-      resp %*{"status":"ok"}
+      resp json.`%*`({"status":"ok"})
       return
 
     if args[0] in ["help", "h"]:
       resp helpMsg.strip
       return
 
-    resp %*{"status":"not supported"}
+    resp json.`%*`({"status":"not supported"})
 
   get "/ping":
-    resp %*{"status":"ok"}
+    resp json.`%*`({"status":"ok"})
 
 proc main =
   var port = getEnv("NIMBOT_SERVER_PORT", "1234").parseInt().Port
