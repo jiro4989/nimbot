@@ -1,10 +1,12 @@
-import asyncdispatch, httpClient, json, os, strutils, sequtils
+import asyncdispatch, httpClient, json, os, strutils, sequtils, logging
 from uri import decodeUrl
 from strformat import `&`
 
 import jester, nimongo.bson, nimongo.mongo
 
 import private/common
+
+addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
 
 const
   helpMsg = """
@@ -46,13 +48,16 @@ router myrouter:
 
     let
       param = request.body()
+
+    info &"param={param}"
+
+    let
       paramMap = param.split("&").mapIt(it.split("="))
       text = paramMap.getParam("text")
       userName = paramMap.getParam("user_id")
       lines = text.split("\n")
 
-    echo &"param = {param}"
-    echo &"text = {text}"
+    info &"text={text}"
 
     if lines.len < 1:
       resp json.`%*`({"status":"illegal commands. see '/nimbot help'."})
@@ -62,6 +67,8 @@ router myrouter:
       args = lines[0].strip.split(" ")
 
     if args[0] in ["compiler", "c"]:
+      info "action=compile"
+
       var tag = "latest"
       if 2 <= args.len:
         if args[1] == "devel":
@@ -71,18 +78,23 @@ router myrouter:
           return
       let
         code = text.getCodeBlock()
+      info &"code={code}"
 
       let
         dbHost = getEnv("NIMBOT_SERVER_DB_HOST")
         dbPort = getEnv("NIMBOT_SERVER_DB_PORT").parseUint.uint16
       var
         mongoClient = newMongo(host=dbHost, port=dbPort)
+      doAssert mongoClient.connect()
       let
-        connectResult = mongoClient.connect()
         collection = mongoClient["db"]["code"]
         record = bson.`%*`({"userId": userName, "compiler": tag, "code": code})
-        insertResult = collection.insert(record)
-      resp json.`%*`({"status":"ok"})
+        reply = collection.insert(record)
+      info &"ok={reply.ok} count={reply.n}"
+      if reply.ok:
+        resp json.`%*`({"status":"ok"})
+      else:
+        resp json.`%*`({"status":"ng"})
       return
 
     if args[0] in ["help", "h"]:

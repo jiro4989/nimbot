@@ -1,13 +1,16 @@
 version: "3"
 
 services:
-  server: &common
-    image: nimlang/nim:1.0.6-ubuntu
+  server:
+    image: &image-nim nimlang/nim:1.0.6-ubuntu
     environment:
-      NIMBOT_SERVER_DB_HOST: http://db
+      NIMBOT_SERVER_PORT: '4001'
+      NIMBOT_SERVER_DB_HOST: db
       NIMBOT_SERVER_DB_PORT: '27017'
     volumes:
       - ".:/work"
+      - "./volume/server/cache:/root/.cache/nim"
+      - "./volume/server/nimble:/root/.nimble"
     working_dir: /work
     ports:
       - 4001:4001
@@ -17,8 +20,12 @@ services:
     entrypoint: "./entrypoint.sh nimbot_server"
 
   executor:
-    <<: *common
-    ports: []
+    image: *image-nim
+    volumes:
+      - ".:/work"
+      - "./volume/executor/cache:/root/.cache/nim"
+      - "./volume/executor/nimble:/root/.nimble"
+    working_dir: /work
     depends_on:
       - db
     entrypoint: "./entrypoint.sh nimbot_executor"
@@ -33,5 +40,6 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./volume/db:/data/db
-      - ./volume/configdb:/data/configdb
+      - ./volume/db/db:/data/db
+      - ./volume/db/configdb:/data/configdb
+      - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
