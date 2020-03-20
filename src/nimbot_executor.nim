@@ -78,18 +78,21 @@ let
 
 var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
 let
-  collection = db["code"]
+  collCode = db["code"]
+  collLog = db["log"]
   query = bson.`%*`({"userId": "test_user"})
   n = bson.`%*`({})
 
 while true:
   sleep 500
 
-  let reply = waitFor collection.findAndModify(query, n, n, false, false, remove=true)
-  info reply
-  if reply.bson["value"].kind == BsonKindNull:
+  let reply = waitFor collCode.findAndModify(query, n, n, false, false, remove=true)
+  let record = reply.bson["value"]
+  if record.kind == BsonKindNull:
     continue
-  info "ok"
+  let reply2 = collLog.insert(record)
+  if not reply2.ok:
+    error "error"
 
   if not existsFile(paramFile):
     continue
