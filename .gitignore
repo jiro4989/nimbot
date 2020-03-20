@@ -1,6 +1,6 @@
 */bin/
-*/tests/t*
-!*/tests/t*.nim
+*/tests/*
+!*/tests/*.*
 volume/server/
 volume/executor/
 volume/db/*
