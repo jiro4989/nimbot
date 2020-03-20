@@ -3,6 +3,7 @@ version: "3"
 services:
   server:
     image: &image-nim nimlang/nim:1.0.6-ubuntu
+    restart: on-failure
     environment:
       NIMBOT_SERVER_PORT: '4001'
       NIMBOT_SERVER_DB_HOST: db
@@ -20,14 +21,14 @@ services:
     depends_on:
       - db
       - executor
+    networks:
+      - back
     entrypoint: "./entrypoint.sh nimbot_server"
 
   executor:
     image: *image-nim
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
+    restart: on-failure
+    #network_mode: "service:db"
     environment:
       NIMBOT_EXECUTOR_PORT: '4001'
       NIMBOT_EXECUTOR_DB_HOST: db
@@ -44,10 +45,14 @@ services:
     depends_on:
       - db
       - slack_mock
+    networks:
+      - back
+      - front
     entrypoint: "./entrypoint.sh nimbot_executor"
 
   db:
     image: mongo:3.6
+    restart: on-failure
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -60,9 +65,17 @@ services:
       - ./volume/db/db:/data/db
       - ./volume/db/configdb:/data/configdb
       - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    networks:
+      - back
 
   slack_mock:
     image: nginx:1.17
     expose:
       - "80"
       - "443"
+    networks:
+      - front
+
+networks:
+  front:
+  back:

@@ -102,6 +102,10 @@ router myrouter:
   get "/ping":
     resp json.`%*`({"status":"ok"})
 
+  post "/restart":
+    info "stop server"
+    quit 1
+
 proc main =
   var port = getEnv("NIMBOT_SERVER_PORT", "1234").parseInt().Port
   var settings = newSettings(port = port)
