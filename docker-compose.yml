@@ -12,7 +12,8 @@ services:
       NIMBOT_SERVER_DB_USER: writer
       NIMBOT_SERVER_DB_PASSWORD: password
     volumes:
-      - ".:/work"
+      - "./nimbot_server:/work"
+      - "./entrypoint.sh:/entrypoint.sh"
       - "./volume/server/cache:/root/.cache/nim"
       - "./volume/server/nimble:/root/.nimble"
     working_dir: /work
@@ -23,7 +24,7 @@ services:
       - executor
     networks:
       - back
-    entrypoint: "./entrypoint.sh nimbot_server"
+    entrypoint: "/entrypoint.sh nimbot_server"
 
   executor:
     image: *image-nim
@@ -38,7 +39,8 @@ services:
       NIMBOT_EXECUTOR_DB_PASSWORD: password
       NIMBOT_EXECUTOR_SLACK_URL: "http://slack_mock"
     volumes:
-      - ".:/work"
+      - "./nimbot_executor:/work"
+      - "./entrypoint.sh:/entrypoint.sh"
       - "./volume/executor/cache:/root/.cache/nim"
       - "./volume/executor/nimble:/root/.nimble"
     working_dir: /work
@@ -48,7 +50,7 @@ services:
     networks:
       - back
       - front
-    entrypoint: "./entrypoint.sh nimbot_executor"
+    entrypoint: "/entrypoint.sh nimbot_executor"
 
   db:
     image: mongo:3.6
