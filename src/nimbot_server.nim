@@ -4,8 +4,6 @@ from strformat import `&`
 
 import jester, nimongo.bson, nimongo.mongo
 
-import private/common
-
 addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
 
 const
@@ -42,10 +40,6 @@ proc getCodeBlock(raw: string): string =
 
 router myrouter:
   post "/play":
-    if existsFile(scriptFile):
-      resp json.`%*`({"status":"other user is using. wait a second."})
-      return
-
     let
       param = request.body()
 

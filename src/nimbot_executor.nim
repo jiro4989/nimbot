@@ -3,8 +3,6 @@ from strformat import `&`
 
 import nimongo.bson, nimongo.mongo
 
-import private/common
-
 addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
 
 const
@@ -70,11 +68,12 @@ let
   user = getEnv("NIMBOT_EXECUTOR_DB_USER")
   pass = getEnv("NIMBOT_EXECUTOR_DB_PASSWORD")
 
+info "start executor"
 var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
 let
   collCode = db["code"]
   collLog = db["log"]
-  query = bson.`%*`({"tag": "latest"})
+  query = bson.`%*`({"compiler": "latest"})
   n = bson.`%*`({})
 
 while true:
@@ -88,6 +87,7 @@ while true:
   if not reply2.ok:
     error "error"
 
+  const scriptFile = "/tmp/main.nim"
   try:
     let
       userId = record["userId"].toString
@@ -106,9 +106,12 @@ while true:
     ].join("\n")
     let body = json.`%*`({ "text":rawBody })
 
+    info "start"
     let url = os.getEnv("NIMBOT_EXECUTOR_SLACK_URL")
     var client = newHttpClient()
-    discard client.post(url, $body)
+    let resp = client.post(url, $body)
+    info resp[]
+    info "finish"
   except:
     error getCurrentExceptionMsg()
   finally:
