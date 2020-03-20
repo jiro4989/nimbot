@@ -1,3 +1,8 @@
 /bin/
-volume/*
+volume/server/
+volume/executor/
+volume/db/*
 !volume/.gitkeep
+!volume/db/docker-entrypoint-initdb.d
+
+tests/test_post
