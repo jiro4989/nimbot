@@ -81,4 +81,3 @@ services:
 networks:
   front:
   back:
-    internal: true
