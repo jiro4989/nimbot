@@ -24,6 +24,13 @@ services:
 
   executor:
     image: *image-nim
+    environment:
+      NIMBOT_EXECUTOR_PORT: '4001'
+      NIMBOT_EXECUTOR_DB_HOST: db
+      NIMBOT_EXECUTOR_DB_PORT: '27017'
+      NIMBOT_EXECUTOR_DB_DBNAME: nimbot
+      NIMBOT_EXECUTOR_DB_USER: writer
+      NIMBOT_EXECUTOR_DB_PASSWORD: password
     volumes:
       - ".:/work"
       - "./volume/executor/cache:/root/.cache/nim"

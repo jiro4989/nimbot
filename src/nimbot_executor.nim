@@ -1,5 +1,7 @@
-import httpClient, json, os, osproc, strutils, strformat, streams, logging
+import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, logging
 from strformat import `&`
+
+import nimongo.bson, nimongo.mongo
 
 import private/common
 
@@ -67,8 +69,27 @@ proc runCommandOnContainer(scriptFile, containerName: string): (string, string, 
   let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
   result = runCommand("docker", args, timeout)
 
+let
+  dbHost = getEnv("NIMBOT_EXECUTOR_DB_HOST")
+  dbPort = getEnv("NIMBOT_EXECUTOR_DB_PORT").parseUint.uint16
+  dbName = getEnv("NIMBOT_EXECUTOR_DB_DBNAME")
+  user = getEnv("NIMBOT_EXECUTOR_DB_USER")
+  pass = getEnv("NIMBOT_EXECUTOR_DB_PASSWORD")
+
+var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
+let
+  collection = db["code"]
+  query = bson.`%*`({"userId": "test_user"})
+  n = bson.`%*`({})
+
 while true:
   sleep 500
+
+  let reply = waitFor collection.findAndModify(query, n, n, false, false, remove=true)
+  info reply
+  if reply.bson["value"].kind == BsonKindNull:
+    continue
+  info "ok"
 
   if not existsFile(paramFile):
     continue
@@ -90,7 +111,7 @@ while true:
       "*stdout:*", "```", stdout, "```",
       "*stderr:*", "```", stderr, "```",
     ].join("\n")
-    let body = %*{ "text":rawBody }
+    let body = json.`%*`({ "text":rawBody })
 
     let url = os.getEnv("NIMBOT_EXECUTOR_SLACK_URL")
     var client = newHttpClient()
