@@ -7,6 +7,9 @@ services:
       NIMBOT_SERVER_PORT: '4001'
       NIMBOT_SERVER_DB_HOST: db
       NIMBOT_SERVER_DB_PORT: '27017'
+      NIMBOT_SERVER_DB_DBNAME: nimbot
+      NIMBOT_SERVER_DB_USER: writer
+      NIMBOT_SERVER_DB_PASSWORD: password
     volumes:
       - ".:/work"
       - "./volume/server/cache:/root/.cache/nim"
@@ -34,7 +37,8 @@ services:
     image: mongo:3.6
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: nimbot
     expose:
       - "27017"
     ports:

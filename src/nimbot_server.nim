@@ -83,11 +83,13 @@ router myrouter:
       let
         dbHost = getEnv("NIMBOT_SERVER_DB_HOST")
         dbPort = getEnv("NIMBOT_SERVER_DB_PORT").parseUint.uint16
-      var
-        mongoClient = newMongo(host=dbHost, port=dbPort)
-      doAssert mongoClient.connect()
+        dbName = getEnv("NIMBOT_SERVER_DB_DBNAME")
+        user = getEnv("NIMBOT_SERVER_DB_USER")
+        pass = getEnv("NIMBOT_SERVER_DB_PASSWORD")
+
+      var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
       let
-        collection = mongoClient["db"]["code"]
+        collection = db["code"]
         record = bson.`%*`({"userId": userName, "compiler": tag, "code": code})
         reply = collection.insert(record)
       info &"ok={reply.ok} count={reply.n}"
