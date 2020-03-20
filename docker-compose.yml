@@ -24,6 +24,10 @@ services:
 
   executor:
     image: *image-nim
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     environment:
       NIMBOT_EXECUTOR_PORT: '4001'
       NIMBOT_EXECUTOR_DB_HOST: db
