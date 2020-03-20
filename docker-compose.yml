@@ -31,6 +31,7 @@ services:
       NIMBOT_EXECUTOR_DB_DBNAME: nimbot
       NIMBOT_EXECUTOR_DB_USER: writer
       NIMBOT_EXECUTOR_DB_PASSWORD: password
+      NIMBOT_EXECUTOR_SLACK_URL: "http://slack_mock"
     volumes:
       - ".:/work"
       - "./volume/executor/cache:/root/.cache/nim"
@@ -38,6 +39,7 @@ services:
     working_dir: /work
     depends_on:
       - db
+      - slack_mock
     entrypoint: "./entrypoint.sh nimbot_executor"
 
   db:
@@ -54,3 +56,9 @@ services:
       - ./volume/db/db:/data/db
       - ./volume/db/configdb:/data/configdb
       - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+
+  slack_mock:
+    image: nginx:1.17
+    expose:
+      - "80"
+      - "443"

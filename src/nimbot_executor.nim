@@ -51,23 +51,17 @@ proc runCommand(command: string, args: openArray[string], timeout: int = 3): (st
 
   result = (stdoutStr, stderrStr, status, msg)
 
-proc runCommandOnContainer(scriptFile, containerName: string): (string, string, int, string) =
+proc runCommandOnContainer(scriptFile: string): (string, string, int, string) =
   let args = [
-    "run",
-    "--rm",
-    "--net=none",
-    "-m", "256MB",
-    "--oom-kill-disable",
-    "--pids-limit", "1024",
-    "--log-driver=json-file",
-    "--log-opt", "max-size=50m",
-    "--log-opt", "max-file=3",
-    "-v", &"{scriptFile}:/tmp/main.nim:ro",
-    "-i", containerName,
-    "bash", "-c", &"sync && cd /tmp && nim c -d:release --hints:off --verbosity:0 main.nim && ./main | stdbuf -o0 head -c 100K",
+    "c",
+    "-d:release",
+    "-r",
+    "--hints:off",
+    "--verbosity:0",
+    scriptFile,
     ]
   let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
-  result = runCommand("docker", args, timeout)
+  result = runCommand("nim", args, timeout)
 
 let
   dbHost = getEnv("NIMBOT_EXECUTOR_DB_HOST")
@@ -80,7 +74,7 @@ var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
 let
   collCode = db["code"]
   collLog = db["log"]
-  query = bson.`%*`({"userId": "test_user"})
+  query = bson.`%*`({"tag": "latest"})
   n = bson.`%*`({})
 
 while true:
@@ -94,18 +88,14 @@ while true:
   if not reply2.ok:
     error "error"
 
-  if not existsFile(paramFile):
-    continue
-
   try:
     let
-      obj = readFile(paramFile).parseJson
-      userId = obj["userId"].getStr
-      code = obj["code"].getStr
-      tag = obj["compiler"].getStr
-      image = &"jiro4989/nimbot/runtime:{tag}"
+      userId = record["userId"].toString
+      code = record["code"].toString
+      tag = record["compiler"].toString
+      #image = &"jiro4989/nimbot/runtime:{tag}"
     writeFile(scriptFile, code)
-    let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
+    let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile)
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
 
     let rawBody = @[
@@ -122,5 +112,4 @@ while true:
   except:
     error getCurrentExceptionMsg()
   finally:
-    removeFile(paramFile)
     removeFile(scriptFile)
