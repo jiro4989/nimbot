@@ -27,7 +27,7 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: "localhost:24224"
-        tag: "docker.{{.Name}}"
+        tag: "log.{{.Name}}"
     entrypoint: "/entrypoint.sh nimbot_server"
 
   executor:
@@ -86,3 +86,4 @@ services:
     #   - 24224
     volumes:
       - "./volume/fluentd/log:/fluentd/log"
+      - "./volume/fluentd/etc:/fluentd/etc"
