@@ -75,11 +75,11 @@ router myrouter:
       info &"code={code}"
 
       let
-        dbHost = getEnv("NIMBOT_SERVER_DB_HOST")
-        dbPort = getEnv("NIMBOT_SERVER_DB_PORT").parseUint.uint16
-        dbName = getEnv("NIMBOT_SERVER_DB_DBNAME")
-        user = getEnv("NIMBOT_SERVER_DB_USER")
-        pass = getEnv("NIMBOT_SERVER_DB_PASSWORD")
+        dbHost = getEnv("DB_HOST")
+        dbPort = getEnv("DB_PORT").parseUint.uint16
+        dbName = getEnv("DB_DBNAME")
+        user = getEnv("DB_USER")
+        pass = getEnv("DB_PASSWORD")
 
       var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
       let
@@ -107,7 +107,7 @@ router myrouter:
     quit 1
 
 proc main =
-  var port = getEnv("NIMBOT_SERVER_PORT", "1234").parseInt().Port
+  var port = getEnv("PORT", "1234").parseInt().Port
   var settings = newSettings(port = port)
   var jester = initJester(myrouter, settings = settings)
   jester.serve()

@@ -62,11 +62,11 @@ proc runCommandOnContainer(scriptFile: string): (string, string, int, string) =
   result = runCommand("nim", args, timeout)
 
 let
-  dbHost = getEnv("NIMBOT_EXECUTOR_DB_HOST")
-  dbPort = getEnv("NIMBOT_EXECUTOR_DB_PORT").parseUint.uint16
-  dbName = getEnv("NIMBOT_EXECUTOR_DB_DBNAME")
-  user = getEnv("NIMBOT_EXECUTOR_DB_USER")
-  pass = getEnv("NIMBOT_EXECUTOR_DB_PASSWORD")
+  dbHost = getEnv("DB_HOST")
+  dbPort = getEnv("DB_PORT").parseUint.uint16
+  dbName = getEnv("DB_DBNAME")
+  user = getEnv("DB_USER")
+  pass = getEnv("DB_PASSWORD")
 
 info "start executor"
 var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
@@ -110,7 +110,7 @@ while true:
     let body = json.`%*`({ "text":rawBody })
 
     info "start"
-    let url = os.getEnv("NIMBOT_EXECUTOR_SLACK_URL")
+    let url = os.getEnv("SLACK_URL")
     var client = newHttpClient()
     let resp = client.post(url, $body)
     info resp[]

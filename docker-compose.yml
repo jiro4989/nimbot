@@ -5,12 +5,12 @@ services:
     image: &image-nim nimlang/nim:1.0.6-ubuntu
     restart: on-failure
     environment:
-      NIMBOT_SERVER_PORT: '4001'
-      NIMBOT_SERVER_DB_HOST: db
-      NIMBOT_SERVER_DB_PORT: '27017'
-      NIMBOT_SERVER_DB_DBNAME: nimbot
-      NIMBOT_SERVER_DB_USER: writer
-      NIMBOT_SERVER_DB_PASSWORD: password
+      PORT: '4001'
+      DB_HOST: db
+      DB_PORT: '27017'
+      DB_DBNAME: nimbot
+      DB_USER: writer
+      DB_PASSWORD: password
     volumes:
       - "./nimbot_server:/work"
       - "./entrypoint.sh:/entrypoint.sh"
@@ -34,13 +34,13 @@ services:
     image: *image-nim
     restart: on-failure
     environment:
-      NIMBOT_EXECUTOR_PORT: '4001'
-      NIMBOT_EXECUTOR_DB_HOST: db
-      NIMBOT_EXECUTOR_DB_PORT: '27017'
-      NIMBOT_EXECUTOR_DB_DBNAME: nimbot
-      NIMBOT_EXECUTOR_DB_USER: writer
-      NIMBOT_EXECUTOR_DB_PASSWORD: password
-      NIMBOT_EXECUTOR_SLACK_URL: "http://slack_mock"
+      PORT: '4001'
+      DB_HOST: db
+      DB_PORT: '27017'
+      DB_DBNAME: nimbot
+      DB_USER: writer
+      DB_PASSWORD: password
+      SLACK_URL: "http://slack_mock"
     volumes:
       - "./nimbot_executor:/work"
       - "./entrypoint.sh:/entrypoint.sh"
