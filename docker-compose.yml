@@ -4,7 +4,7 @@ services:
   server:
     image: &image-nim nimlang/nim:1.0.6-ubuntu
     restart: on-failure
-    environment:
+    environment: &app-env
       PORT: '4001'
       DB_HOST: db
       DB_PORT: '27017'
@@ -34,12 +34,7 @@ services:
     image: *image-nim
     restart: on-failure
     environment:
-      PORT: '4001'
-      DB_HOST: db
-      DB_PORT: '27017'
-      DB_DBNAME: nimbot
-      DB_USER: writer
-      DB_PASSWORD: password
+      <<: *app-env
       SLACK_URL: "http://slack_mock"
     volumes:
       - "./nimbot_executor:/work"
