@@ -22,14 +22,17 @@ services:
     depends_on:
       - db
       - executor
-    networks:
-      - back
+      - fluentd
+    logging: &logging
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.{{.Name}}"
     entrypoint: "/entrypoint.sh nimbot_server"
 
   executor:
     image: *image-nim
     restart: on-failure
-    #network_mode: "service:db"
     environment:
       NIMBOT_EXECUTOR_PORT: '4001'
       NIMBOT_EXECUTOR_DB_HOST: db
@@ -47,10 +50,9 @@ services:
     depends_on:
       - db
       - slack_mock
-    networks:
-      - back
-      - front
+      - fluentd
     entrypoint: "/entrypoint.sh nimbot_executor"
+    logging: *logging
 
   db:
     image: mongo:3.6
@@ -67,17 +69,25 @@ services:
       - ./volume/db/db:/data/db
       - ./volume/db/configdb:/data/configdb
       - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    networks:
-      - back
+    logging: *logging
+    depends_on:
+      - fluentd
 
   slack_mock:
     image: nginx:1.17
     expose:
       - "80"
       - "443"
-    networks:
-      - front
+    logging: *logging
+    depends_on:
+      - fluentd
 
-networks:
-  front:
-  back:
+  fluentd:
+    image: fluentd:v1.9-1
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    # expose:
+    #   - 24224
+    volumes:
+      - "./volume/fluentd/log:/fluentd/log"

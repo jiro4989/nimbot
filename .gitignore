@@ -4,6 +4,8 @@
 volume/server/
 volume/executor/
 volume/db/*
+volume/fluentd/log/*
+!volume/fluentd/log/.gitkeep
 !volume/.gitkeep
 !volume/db/docker-entrypoint-initdb.d
 
