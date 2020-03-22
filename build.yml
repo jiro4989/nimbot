@@ -14,3 +14,9 @@ services:
       dockerfile: ./build/executor/Dockerfile
       target: runtime
     image: jiro4989/nimbot/executor-runtime
+
+  fluentd:
+    build:
+      context: .
+      dockerfile: ./build/fluentd/Dockerfile
+    image: jiro4989/nimbot/fluentd-runtime
