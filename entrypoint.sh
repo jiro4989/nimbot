@@ -2,6 +2,5 @@
 
 set -eu
 
-export PATH=~/.nimble/bin:$PATH
 nimble install -Y
-$1
+/root/.nimble/bin/$1
