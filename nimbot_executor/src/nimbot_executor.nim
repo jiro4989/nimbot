@@ -1,9 +1,9 @@
 import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, logging
 from strformat import `&`
 
-import nimongo.bson, nimongo.mongo
+import nimongo/bson, nimongo/mongo
 
-addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
+addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname "))
 
 const
   statusOk = 0

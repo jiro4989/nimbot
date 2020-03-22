@@ -2,9 +2,9 @@ import asyncdispatch, httpClient, json, os, strutils, sequtils, logging
 from uri import decodeUrl
 from strformat import `&`
 
-import jester, nimongo.bson, nimongo.mongo
+import jester, nimongo/bson, nimongo/mongo
 
-addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
+addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname "))
 
 const
   helpMsg = """
