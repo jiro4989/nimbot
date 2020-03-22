@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  build-image-compiler-stable:
+    build:
+      context: ./build/runner_stable
+      dockerfile: Dockerfile
+    entrypoint: echo ok
+
+  build-image-compiler-devel:
+    build:
+      context: ./build/runner_devel
+      dockerfile: Dockerfile
+    entrypoint: echo ok
+
   server:
     image: &image-nim nimlang/nim:1.0.6-ubuntu
     restart: on-failure
@@ -50,6 +62,8 @@ services:
       - db
       - slack_mock
       - fluentd
+      - build-image-compiler-stable
+      - build-image-compiler-devel
     entrypoint: "/entrypoint.sh nimbot_executor"
     logging: *logging
 
