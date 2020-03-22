@@ -99,7 +99,7 @@ while true:
       userId = record["userId"].toString
       code = record["code"].toString
       compiler = record["compiler"].toString
-      image = &"jiro4989/nimbot/compiler:{compiler}"
+      image = &"jiro4989/nimbot:compiler-{compiler}"
     info &"start executer: userID={userId} code={code} image={image}"
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
