@@ -97,6 +97,7 @@ router myrouter:
       resp helpMsg.strip
       return
 
+    info "finish server:"
     resp json.`%*`({"status":"not supported"})
 
   get "/ping":

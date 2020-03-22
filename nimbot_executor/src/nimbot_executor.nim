@@ -65,7 +65,7 @@ proc runCommandOnContainer(scriptFile, image: string): (string, string, int, str
     "bash", "-c", &"sync && cd /tmp && nim c -d:release --hints:off --verbosity:0 main.nim && ./main | stdbuf -o0 head -c 100K",
     ]
   let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
-  result = runCommand("nim", args, timeout)
+  result = runCommand("docker", args, timeout)
 
 let
   dbHost = getEnv("DB_HOST")
@@ -100,7 +100,7 @@ while true:
       code = record["code"].toString
       compiler = record["compiler"].toString
       image = &"jiro4989/nimbot/runner:{compiler}"
-    info &"userID={userId} code={code} image={image}"
+    info &"start executer: userID={userId} code={code} image={image}"
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
@@ -113,12 +113,12 @@ while true:
     ].join("\n")
     let body = json.`%*`({ "text":rawBody })
 
-    info "start"
+    info "post to slack"
     let url = os.getEnv("SLACK_URL")
     var client = newHttpClient()
     let resp = client.post(url, $body)
     info resp[]
-    info "finish"
+    info "finish executer:"
   except:
     error getCurrentExceptionMsg()
   finally:
