@@ -32,24 +32,24 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build app
-        run: docker-compose -f .github/docker-compose-builder.yml run ${{ env.APP_NAME }}
-      - name: Check apps
-        run: ls -lah bin/
-      - name: Archive release files
-        run: |
-          mkdir -p dist/${{ env.APP_NAME }}
-          cp -r bin dist/${{ env.APP_NAME }}
-          git describe --tags --abbrev=0 > dist/${{ env.APP_NAME }}/tag.txt
-          pushd dist
-          tar czf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
-          popd
-          ls -lah dist/${{ env.APP_NAME }}.tar.gz
-      - name: Upload artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: app
-          path: dist/${{ env.APP_NAME }}.tar.gz
-        if: startsWith(github.ref, 'refs/tags/')
+        run: docker-compose -f .github/build.yml build
+      # - name: Check apps
+      #   run: ls -lah bin/
+      # - name: Archive release files
+      #   run: |
+      #     mkdir -p dist/${{ env.APP_NAME }}
+      #     cp -r bin dist/${{ env.APP_NAME }}
+      #     git describe --tags --abbrev=0 > dist/${{ env.APP_NAME }}/tag.txt
+      #     pushd dist
+      #     tar czf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
+      #     popd
+      #     ls -lah dist/${{ env.APP_NAME }}.tar.gz
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: app
+      #     path: dist/${{ env.APP_NAME }}.tar.gz
+      #   if: startsWith(github.ref, 'refs/tags/')
 
   create-tag-draft:
     runs-on: ubuntu-latest
