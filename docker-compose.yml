@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   build-image-compiler-stable:
@@ -48,6 +48,7 @@ services:
     build:
       context: ./build/executor
       dockerfile: Dockerfile
+      target: base
     image: jiro4989/nimbot/executor
     restart: on-failure
     environment:

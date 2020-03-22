@@ -1,4 +1,4 @@
-FROM docker:19.03-dind
+FROM docker:19.03-dind AS base
 
 # Let's start with some basic stuff.
 RUN apk add --no-cache alpine-sdk
@@ -16,3 +16,15 @@ RUN nim c -d:release koch.nim && \
 
 RUN nim --version && \
     nimble --version
+
+
+FROM base AS builder
+
+COPY nimbot_executor /work
+RUN cd /work && nimble install -Y
+
+
+FROM docker:19.03-dind AS runtime
+
+COPY --from=builder /root/.nimble/bin/nimbot_executor /usr/local/bin/nimbot_executor
+ENTRYPOINT ["/usr/local/bin/nimbot_executor"]
