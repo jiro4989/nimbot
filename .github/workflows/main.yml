@@ -40,11 +40,11 @@ jobs:
         run: docker-compose -f .github/build.yml build
       - name: Push image to docker registory
         run: |
-          docker push ${{ env.DOCKER_REGISTORY }}/server-runtime:latest
-          docker push ${{ env.DOCKER_REGISTORY }}/executor-runtime:latest
-          docker push ${{ env.DOCKER_REGISTORY }}/fluentd-runtime:latest
-          docker push ${{ env.DOCKER_REGISTORY }}/compiler:stable
-          docker push ${{ env.DOCKER_REGISTORY }}/compiler:devel
+          docker push ${{ env.DOCKER_REGISTORY }}:server-runtime-latest
+          docker push ${{ env.DOCKER_REGISTORY }}:executor-runtime-latest
+          docker push ${{ env.DOCKER_REGISTORY }}:fluentd-runtime-latest
+          docker push ${{ env.DOCKER_REGISTORY }}:compiler-stable
+          docker push ${{ env.DOCKER_REGISTORY }}:compiler-devel
 
       # - name: Check apps
       #   run: ls -lah bin/
