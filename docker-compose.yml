@@ -5,12 +5,14 @@ services:
     build:
       context: ./build/runner_stable
       dockerfile: Dockerfile
+    image: jiro4989/nimbot/runner:stable
     entrypoint: echo ok
 
   build-image-compiler-devel:
     build:
       context: ./build/runner_devel
       dockerfile: Dockerfile
+    image: jiro4989/nimbot/runner:devel
     entrypoint: echo ok
 
   server:
