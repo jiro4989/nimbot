@@ -105,4 +105,4 @@ services:
       - 24224:24224/udp
     volumes:
       - "./volume/fluentd/log:/fluentd/log"
-      - "./volume/fluentd/etc:/fluentd/etc"
+      - "./conf/fluentd:/fluentd/etc"
