@@ -3,7 +3,7 @@ from strformat import `&`
 
 import nimongo/bson, nimongo/mongo
 
-addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname "))
+addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname ", useStderr = true))
 
 const
   statusOk = 0
@@ -49,14 +49,20 @@ proc runCommand(command: string, args: openArray[string], timeout: int = 3): (st
 
   result = (stdoutStr, stderrStr, status, msg)
 
-proc runCommandOnContainer(scriptFile: string): (string, string, int, string) =
+proc runCommandOnContainer(scriptFile, image: string): (string, string, int, string) =
   let args = [
-    "c",
-    "-d:release",
-    "-r",
-    "--hints:off",
-    "--verbosity:0",
-    scriptFile,
+    "run",
+    "--rm",
+    "--net=none",
+    "-m", "256MB",
+    "--oom-kill-disable",
+    "--pids-limit", "1024",
+    "--log-driver=json-file",
+    "--log-opt", "max-size=50m",
+    "--log-opt", "max-file=3",
+    "-v", &"{scriptFile}:/tmp/main.nim:ro",
+    "-i", image,
+    "bash", "-c", &"sync && cd /tmp && nim c -d:release --hints:off --verbosity:0 main.nim && ./main | stdbuf -o0 head -c 100K",
     ]
   let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
   result = runCommand("nim", args, timeout)
@@ -73,7 +79,7 @@ var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
 let
   collCode = db["code"]
   collLog = db["log"]
-  query = bson.`%*`({"compiler": "latest"})
+  query = bson.`%*`({"compiler": "stable"})
   n = bson.`%*`({})
 
 while true:
@@ -92,10 +98,11 @@ while true:
     let
       userId = record["userId"].toString
       code = record["code"].toString
-      tag = record["compiler"].toString
-      #image = &"jiro4989/nimbot/runtime:{tag}"
+      compiler = record["compiler"].toString
+      image = &"jiro4989/nimbot/runner:{compiler}"
+    info &"userID={userId} code={code} image={image}"
     writeFile(scriptFile, code)
-    let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile)
+    let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
 
     let rawBody = @[

@@ -4,7 +4,7 @@ from strformat import `&`
 
 import jester, nimongo/bson, nimongo/mongo
 
-addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname "))
+addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname ", useStderr = true))
 
 const
   helpMsg = """
@@ -63,7 +63,7 @@ router myrouter:
     if args[0] in ["compiler", "c"]:
       info "action=compile"
 
-      var tag = "latest"
+      var tag = "stable"
       if 2 <= args.len:
         if args[1] == "devel":
           tag = "devel"
