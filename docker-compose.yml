@@ -103,8 +103,6 @@ services:
     ports:
       - 24224:24224
       - 24224:24224/udp
-    # expose:
-    #   - 24224
     volumes:
       - "./volume/fluentd/log:/fluentd/log"
       - "./volume/fluentd/etc:/fluentd/etc"
