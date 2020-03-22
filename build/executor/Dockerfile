@@ -8,7 +8,7 @@ RUN mkdir -p /nim && \
     sh build.sh && \
     rm -r c_code tests
 
-ENV PATH=/nim/bin:~/.nimble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/nim/bin:/root/.nimble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /nim
 RUN nim c -d:release koch.nim && \

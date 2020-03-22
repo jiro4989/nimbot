@@ -14,7 +14,7 @@ services:
     entrypoint: echo ok
 
   server:
-    image: &image-nim nimlang/nim:1.0.6-ubuntu
+    image: nimlang/nim:1.0.6-ubuntu
     restart: on-failure
     environment: &app-env
       PORT: '4001'

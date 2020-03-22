@@ -76,9 +76,6 @@ let
   query = bson.`%*`({"compiler": "latest"})
   n = bson.`%*`({})
 
-var client = newHttpClient()
-echo client.getContent("http://websh.jiro4989.com")
-
 while true:
   sleep 500
 
