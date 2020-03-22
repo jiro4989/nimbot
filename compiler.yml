@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  build-image-compiler-stable:
+    build:
+      context: ./build/compiler_stable
+      dockerfile: Dockerfile
+    image: jiro4989/nimbot/compiler:stable
+
+  build-image-compiler-devel:
+    build:
+      context: ./build/compiler_devel
+      dockerfile: Dockerfile
+    image: jiro4989/nimbot/compiler:devel
