@@ -13,6 +13,7 @@ on:
 env:
   APP_NAME: nimbot
   IMAGE: jiro4989/nimbot/runtime
+  DOCKER_REGISTORY: jiro4989/nimbot
 
 jobs:
   skip:
@@ -39,11 +40,11 @@ jobs:
         run: docker-compose -f .github/build.yml build
       - name: Push image to docker registory
         run: |
-          docker push jiro4989/nimbot/server-runtime:latest
-          docker push jiro4989/nimbot/executor-runtime:latest
-          docker push jiro4989/nimbot/fluentd-runtime:latest
-          docker push jiro4989/nimbot/compiler:stable
-          docker push jiro4989/nimbot/compiler:devel
+          docker push ${{ env.DOCKER_REGISTORY }}/server-runtime:latest
+          docker push ${{ env.DOCKER_REGISTORY }}/executor-runtime:latest
+          docker push ${{ env.DOCKER_REGISTORY }}/fluentd-runtime:latest
+          docker push ${{ env.DOCKER_REGISTORY }}/compiler:stable
+          docker push ${{ env.DOCKER_REGISTORY }}/compiler:devel
 
       # - name: Check apps
       #   run: ls -lah bin/
