@@ -31,7 +31,10 @@ services:
     entrypoint: "/entrypoint.sh nimbot_server"
 
   executor:
-    image: *image-nim
+    build:
+      context: ./build/executor
+      dockerfile: Dockerfile
+    image: jiro4989/nimbot/executor
     restart: on-failure
     environment:
       <<: *app-env
@@ -41,6 +44,7 @@ services:
       - "./entrypoint.sh:/entrypoint.sh"
       - "./volume/executor/cache:/root/.cache/nim"
       - "./volume/executor/nimble:/root/.nimble"
+      - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
     working_dir: /work
     depends_on:
       - db
