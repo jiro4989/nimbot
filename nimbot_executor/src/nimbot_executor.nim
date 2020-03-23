@@ -64,7 +64,7 @@ proc runCommandOnContainer(scriptFile, image: string): (string, string, int, str
     "-i", image,
     "bash", "-c", &"sync && cd /tmp && nim c -d:release --hints:off --verbosity:0 main.nim && ./main | stdbuf -o0 head -c 100K",
     ]
-  let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
+  let timeout = getEnv("COMMAND_TIMEOUT", "10").parseInt
   result = runCommand("docker", args, timeout)
 
 let
