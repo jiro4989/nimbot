@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+
+  fluentd:
+    image: jiro4989/nimbot:fluentd-runtime
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    volumes:
+      - "/var/log/nimbot:/var/log/nimbot"
+    networks:
+      - log
+
+networks:
+  log:

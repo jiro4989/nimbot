@@ -1,0 +1,46 @@
+version: "3.7"
+
+services:
+  server:
+    image: jiro4989/nimbot:server-runtime
+    restart: on-failure
+    environment: &app-env
+      PORT: '4001'
+      DB_HOST: db
+      DB_PORT: '27017'
+      DB_DBNAME: nimbot
+      DB_USER: writer
+      DB_PASSWORD: "$DB_PASSWORD"
+    ports:
+      - 4001:4001
+    depends_on:
+      - executor
+    logging: &logging
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "log.{{.Name}}"
+    networks: &networks
+      - back
+      - nimbot_db
+      - nimbot_log
+    entrypoint: "/usr/local/bin/nimbot_server"
+
+  executor:
+    image: jiro4989/nimbot:executor-runtime
+    restart: on-failure
+    environment:
+      <<: *app-env
+      SLACK_URL: "$SLACK_URL"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
+    logging: *logging
+    networks: *networks
+    entrypoint: "/usr/local/bin/nimbot_executor"
+
+networks:
+  back:
+  nimbot_db:
+    external: true
+  nimbot_log:
+    external: true
