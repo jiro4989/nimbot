@@ -83,10 +83,13 @@ services:
       - fluentd
 
   fluentd:
-    image: fluentd:v1.9-1
+    build:
+      context: .
+      dockerfile: ./build/fluentd/Dockerfile
+    image: jiro4989/nimbot:fluentd
     ports:
       - 24224:24224
       - 24224:24224/udp
     volumes:
-      - "./volume/fluentd/log:/fluentd/log"
+      - "./volume/fluentd/log:/var/log/nimbot"
       - "./conf/fluentd:/fluentd/etc"

@@ -40,4 +40,4 @@ services:
       - 24224:24224
       - 24224:24224/udp
     volumes:
-      - "/var/log/nimbot:/fluentd/log"
+      - "/var/log/nimbot:/var/log/nimbot"
