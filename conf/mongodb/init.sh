@@ -2,7 +2,6 @@
 
 set -eu
 
-echo "fuck --------------------------"
 mongo -u 'root' -p "$MONGO_INITDB_ROOT_PASSWORD" << EOF
   use nimbot
 
@@ -24,4 +23,3 @@ mongo -u 'root' -p "$MONGO_INITDB_ROOT_PASSWORD" << EOF
   }
 
 EOF
-echo "fuckoff --------------------------"
