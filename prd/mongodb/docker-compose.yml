@@ -8,7 +8,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: nimbot
+      #MONGO_INITDB_DATABASE: nimbot
     expose:
       - "27017"
     ports:
@@ -17,7 +17,7 @@ services:
       # NOTE: 毎回作り直せばいいからvolumeしない
       # - ./volume/db/db:/data/db
       # - ./volume/db/configdb:/data/configdb
-      - ../../conf/mongodb/init.js:/docker-entrypoint-initdb.d/init.js
+      - ../../conf/mongodb/init.sh:/docker-entrypoint-initdb.d/init.sh
     logging:
       driver: "fluentd"
       options:
