@@ -6,7 +6,7 @@ services:
     restart: on-failure
     environment: &app-env
       PORT: '4001'
-      DB_HOST: db
+      DB_HOST: mongodb
       DB_PORT: '27017'
       DB_DBNAME: nimbot
       DB_USER: writer
@@ -20,10 +20,6 @@ services:
       options:
         fluentd-address: "localhost:24224"
         tag: "log.{{.Name}}"
-    networks: &networks
-      - back
-      - nimbot_db
-      - nimbot_log
     entrypoint: "/usr/local/bin/nimbot_server"
 
   executor:
@@ -35,7 +31,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
     logging: *logging
-    networks: *networks
     entrypoint: "/usr/local/bin/nimbot_executor"
 
   slack_mock:
@@ -44,11 +39,9 @@ services:
       - "80"
       - "443"
     logging: *logging
-    networks: *networks
 
 networks:
-  back:
-  nimbot_db:
+  mongodb_default:
     external: true
-  nimbot_log:
+  fluentd_default:
     external: true

@@ -1,35 +1,54 @@
+import os, strformat
+
+let
+  composeFile = "docker-compose.yml"
+  composePrdFluentd = "prd"/"fluentd"/composeFile
+  composePrdMongoDb = "prd"/"mongodb"/composeFile
+  composePrdNimbot = "prd"/"nimbot"/composeFile
+
+proc upService(compose: string) =
+  exec &"docker-compose -f {compose} up -d"
+
+proc downService(compose: string) =
+  exec &"docker-compose -f {compose} down"
+
 task upDev, "start dev application":
   selfExec "downDev"
   exec "docker-compose up -d"
   exec "docker-compose ps"
 
 task upLog, "start log":
-  exec "docker-compose -f prd-log.yml up -d"
+  upService(composePrdFluentd)
 
 task upDb, "start database":
-  exec "docker-compose -f prd-db.yml up -d"
+  upService(composePrdMongoDb)
 
 task upApp, "start application":
-  exec "docker-compose -f prd-docker-compose.yml up -d"
+  upService(composePrdNimbot)
+
+task status, "print status":
+  let files = [composePrdFluentd, composePrdMongoDb, composePrdNimbot]
+  for f in files:
+    exec &"docker-compose -f {f} ps"
 
 task upAll, "start all application":
   selfExec "downAll"
   selfExec "upLog"
   selfExec "upDb"
   selfExec "upApp"
-  exec "docker-compose -f prd-log.yml -f prd-db.yml -f prd-docker-compose.yml ps"
+  selfExec "status"
 
 task downDev, "down dev application":
   exec "docker-compose down"
 
 task downLog, "down log":
-  exec "docker-compose -f prd-log.yml down"
+  downService(composePrdFluentd)
 
 task downDb, "down database":
-  exec "docker-compose -f prd-db.yml down"
+  downService(composePrdMongoDb)
 
 task downApp, "down application":
-  exec "docker-compose -f prd-docker-compose.yml down"
+  downService(composePrdNimbot)
 
 task downAll, "down all application":
   selfExec "downApp"

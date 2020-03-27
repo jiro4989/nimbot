@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
 
-  db:
+  mongodb:
     image: mongo:3.6
     restart: on-failure
     environment:
@@ -14,12 +14,10 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./volume/db/db:/data/db
-      - ./volume/db/configdb:/data/configdb
-      - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    networks:
-      - db
-      - nimbot_log
+      # NOTE: 毎回作り直せばいいからvolumeしない
+      # - ./volume/db/db:/data/db
+      # - ./volume/db/configdb:/data/configdb
+      - ../../conf/mongodb/init.js:/docker-entrypoint-initdb.d/init.js
     logging:
       driver: "fluentd"
       options:
@@ -27,6 +25,5 @@ services:
         tag: "log.{{.Name}}"
 
 networks:
-  db:
-  nimbot_log:
+  fluentd_default:
     external: true
