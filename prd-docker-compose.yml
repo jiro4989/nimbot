@@ -38,6 +38,14 @@ services:
     networks: *networks
     entrypoint: "/usr/local/bin/nimbot_executor"
 
+  slack_mock:
+    image: nginx:1.17
+    expose:
+      - "80"
+      - "443"
+    logging: *logging
+    networks: *networks
+
 networks:
   back:
   nimbot_db:
