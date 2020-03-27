@@ -36,3 +36,6 @@ task downAll, "down all application":
   selfExec "downDb"
   selfExec "downLog"
 
+task tests, "test post":
+  withDir "nimbot_server":
+    exec "nimble test -Y"
