@@ -85,15 +85,14 @@ let
 while true:
   sleep 500
 
-  info "findAndModify: code"
   let reply = waitFor collCode.findAndModify(query, n, n, false, false, remove=true)
   let record = reply.bson["value"]
   if record.kind == BsonKindNull:
     continue
-  info "insert: log"
   let reply2 = collLog.insert(record)
   if not reply2.ok:
     error "error"
+    continue
 
   const scriptFile = "/tmp/main.nim"
   try:
