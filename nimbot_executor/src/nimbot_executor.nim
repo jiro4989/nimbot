@@ -94,7 +94,7 @@ while true:
     error "error"
     continue
 
-  const scriptFile = "/tmp/main.nim"
+  const scriptFile = "./main.nim"
   try:
     let
       userId = record["userId"].toString
