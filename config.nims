@@ -55,6 +55,9 @@ task downAll, "down all application":
   selfExec "downDb"
   selfExec "downLog"
 
+task buildImage, "build prd images":
+  exec "docker-compose -f .github/build.yml build --no-cache"
+
 task tests, "test post":
   withDir "nimbot_server":
     exec "nimble test -Y"

@@ -1,5 +1,3 @@
-db.dropAllUsers();
-
 var users = [
   {
     user: "writer",
@@ -13,3 +11,6 @@ var users = [
 for (var i=0; i<users.length; i++) {
   db.createUser(users[i]);
 }
+
+db.createCollection("code", {validator: {$jsonSchema: {required: ["userId", "compiler", "code"]}}})
+db.createCollection("log")
