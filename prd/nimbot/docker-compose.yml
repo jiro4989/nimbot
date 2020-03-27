@@ -20,6 +20,9 @@ services:
       options:
         fluentd-address: "localhost:24224"
         tag: "log.{{.Name}}"
+    networks: &network
+      - back
+      - mongodb_default
     entrypoint: "/usr/local/bin/nimbot_server"
 
   executor:
@@ -31,17 +34,20 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
     logging: *logging
+    networks: *network
     entrypoint: "/usr/local/bin/nimbot_executor"
 
   slack_mock:
     image: nginx:1.17
+    container_name: slack_mock
     expose:
       - "80"
       - "443"
+    networks:
+      - back
     logging: *logging
 
 networks:
+  back:
   mongodb_default:
-    external: true
-  fluentd_default:
     external: true
