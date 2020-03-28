@@ -3,6 +3,9 @@ version: "3.7"
 services:
 
   fluentd:
+    build:
+      context: ../../
+      dockerfile: ./build/fluentd/Dockerfile
     image: jiro4989/nimbot:fluentd-runtime
     ports:
       - 24224:24224
