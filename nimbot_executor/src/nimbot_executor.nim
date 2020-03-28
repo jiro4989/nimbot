@@ -50,6 +50,7 @@ proc runCommand(command: string, args: openArray[string], timeout: int = 3): (st
   result = (stdoutStr, stderrStr, status, msg)
 
 proc runCommandOnContainer(scriptFile, image: string): (string, string, int, string) =
+  let hostPwd = getEnv("HOST_PWD")
   let args = [
     "run",
     "--rm",
@@ -60,7 +61,7 @@ proc runCommandOnContainer(scriptFile, image: string): (string, string, int, str
     "--log-driver=json-file",
     "--log-opt", "max-size=50m",
     "--log-opt", "max-file=3",
-    "-v", &"{scriptFile}:/tmp/main.nim:ro",
+    "-v", &"{hostPwd}/executor/main.nim:/tmp/main.nim:ro",
     "-i", image,
     "bash", "-c", &"sync && cd /tmp && nim c -d:release --hints:off --verbosity:0 main.nim && ./main | stdbuf -o0 head -c 100K",
     ]
@@ -94,7 +95,7 @@ while true:
     error "error"
     continue
 
-  const scriptFile = "/tmp/main2.nim"
+  let scriptFile = "."/"executor"/"main.nim"
   try:
     let
       userId = record["userId"].toString

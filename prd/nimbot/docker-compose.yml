@@ -31,8 +31,10 @@ services:
     environment:
       <<: *app-env
       SLACK_URL: "$SLACK_URL"
+      HOST_PWD: "$PWD"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
+      - "./executor:/executor"
     logging: *logging
     networks: *network
     entrypoint: "/usr/local/bin/nimbot_executor"
