@@ -1,4 +1,4 @@
-import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, logging
+import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, logging, times
 from strformat import `&`
 
 import nimongo/bson, nimongo/mongo
@@ -87,9 +87,10 @@ while true:
   sleep 500
 
   let reply = waitFor collCode.findAndModify(query, n, n, false, false, remove=true)
-  let record = reply.bson["value"]
+  var record = reply.bson["value"]
   if record.kind == BsonKindNull:
     continue
+  record["created_at"] = ($now()).toBson()
   let reply2 = collLog.insert(record)
   if not reply2.ok:
     error "error"

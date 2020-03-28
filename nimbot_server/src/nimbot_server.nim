@@ -1,4 +1,4 @@
-import asyncdispatch, httpClient, json, os, strutils, sequtils, logging
+import asyncdispatch, httpClient, json, os, strutils, sequtils, logging, times
 from uri import decodeUrl
 from strformat import `&`
 
@@ -82,9 +82,15 @@ router myrouter:
         pass = getEnv("DB_PASSWORD")
 
       var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
+      let now = now()
       let
         collection = db["code"]
-        record = bson.`%*`({"userId": userName, "compiler": tag, "code": code})
+        record = bson.`%*`({
+          "userId": userName,
+          "compiler": tag,
+          "code": code,
+          "created_at": $now,
+          })
         reply = collection.insert(record)
       info &"ok={reply.ok} count={reply.n}"
       if reply.ok:
