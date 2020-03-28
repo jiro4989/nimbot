@@ -66,8 +66,6 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./volume/db/db:/data/db
-      - ./volume/db/configdb:/data/configdb
       - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     logging: *logging
     depends_on:
