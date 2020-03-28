@@ -30,7 +30,6 @@ services:
     entrypoint: "/usr/local/bin/nimbot_server"
 
   executor:
-  executor:
     build:
       context: ../../
       dockerfile: ./build/executor/Dockerfile
