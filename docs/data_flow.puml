@@ -1,36 +1,45 @@
-@startuml
+@startuml data_flow
 
 actor User as user
 participant Slack as slack
 participant nimbot_server as server
 participant nimbot_executor as exec
 participant Docker as container
-database FileSystem as fs
+database MongoDB as db
 
-activate exec
-
-user -> slack : Send "/nimbot" text
+user -> slack : Send "/nimbot c" code
+activate user
 activate slack
-slack -> server : POST WebhookURL of my server
+slack -> server : POST /play
 activate server
-server -> fs : Save a text of POST data
-activate fs
+server -> db : Save a code of POST body
+activate db
 server -> slack : Response "ok"
 deactivate server
 slack -> user : "ok"
 deactivate slack
 
-alt when a file exists
-    exec -> fs : Read a code
+alt when codes exist
+    exec -> db : Fetch codes and delete
+    activate exec
+    db -> exec : Result
+    deactivate db
     exec -> container : docker run
     activate container
     container -> container : nim c -r main.nim
     container -> exec : Return stdout/stderr
     deactivate container
     exec -> slack : POST to incomming webhook
-    exec -> fs : Remove
-    deactivate fs
+    deactivate exec
     slack -> user : Print code/stdout/stderr
+end
+deactivate user
+
+alt when codes does not exist
+    exec -> db : Fetch codes and delete
+    activate exec
+    db -> exec : Result
+    deactivate exec
 end
 
 @enduml

@@ -4,9 +4,7 @@ nimbot
 
 Slackbot for Nim user.
 
-|data-flow|
-
-.. |data-flow| image:: ./docs/data_flow.svg
+|image-data-flow|
 
 Usave
 =====
@@ -24,3 +22,6 @@ Starts for production.
    docker-compose -f compiler.yml build
    docker-compose -f .github/build.yml build
    docker-compose -f docker-compose.yml -f prd.yml up
+
+.. |image-data-flow| image:: ./out/docs/data_flow/data_flow.svg
+
