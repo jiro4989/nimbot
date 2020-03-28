@@ -13,6 +13,7 @@ on:
 env:
   APP_NAME: nimbot
   IMAGE: jiro4989/nimbot/runtime
+  DOCKER_REGISTORY: jiro4989/nimbot
 
 jobs:
   skip:
@@ -31,25 +32,37 @@ jobs:
     needs: before
     steps:
       - uses: actions/checkout@v1
+      - name: Login docker
+        run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+      - name: Build compiler
+        run: docker-compose -f compiler.yml build
       - name: Build app
-        run: docker-compose -f .github/docker-compose-builder.yml run ${{ env.APP_NAME }}
-      - name: Check apps
-        run: ls -lah bin/
-      - name: Archive release files
+        run: docker-compose -f .github/build.yml build
+      - name: Push image to docker registory
         run: |
-          mkdir -p dist/${{ env.APP_NAME }}
-          cp -r bin dist/${{ env.APP_NAME }}
-          git describe --tags --abbrev=0 > dist/${{ env.APP_NAME }}/tag.txt
-          pushd dist
-          tar czf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
-          popd
-          ls -lah dist/${{ env.APP_NAME }}.tar.gz
-      - name: Upload artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: app
-          path: dist/${{ env.APP_NAME }}.tar.gz
-        if: startsWith(github.ref, 'refs/tags/')
+          docker push ${{ env.DOCKER_REGISTORY }}:server-runtime
+          docker push ${{ env.DOCKER_REGISTORY }}:executor-runtime
+          docker push ${{ env.DOCKER_REGISTORY }}:fluentd-runtime
+          docker push ${{ env.DOCKER_REGISTORY }}:compiler-stable
+          docker push ${{ env.DOCKER_REGISTORY }}:compiler-devel
+
+      # - name: Check apps
+      #   run: ls -lah bin/
+      # - name: Archive release files
+      #   run: |
+      #     mkdir -p dist/${{ env.APP_NAME }}
+      #     cp -r bin dist/${{ env.APP_NAME }}
+      #     git describe --tags --abbrev=0 > dist/${{ env.APP_NAME }}/tag.txt
+      #     pushd dist
+      #     tar czf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
+      #     popd
+      #     ls -lah dist/${{ env.APP_NAME }}.tar.gz
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: app
+      #     path: dist/${{ env.APP_NAME }}.tar.gz
+      #   if: startsWith(github.ref, 'refs/tags/')
 
   create-tag-draft:
     runs-on: ubuntu-latest

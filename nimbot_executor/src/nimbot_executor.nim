@@ -1,9 +1,9 @@
-import httpClient, json, os, osproc, strutils, strformat, streams, logging
+import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, logging, times
 from strformat import `&`
 
-import private/common
+import nimongo/bson, nimongo/mongo
 
-addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
+addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname ", useStderr = true))
 
 const
   statusOk = 0
@@ -49,7 +49,8 @@ proc runCommand(command: string, args: openArray[string], timeout: int = 3): (st
 
   result = (stdoutStr, stderrStr, status, msg)
 
-proc runCommandOnContainer(scriptFile, containerName: string): (string, string, int, string) =
+proc runCommandOnContainer(scriptFile, image: string): (string, string, int, string) =
+  let hostPwd = getEnv("HOST_PWD")
   let args = [
     "run",
     "--rm",
@@ -60,26 +61,49 @@ proc runCommandOnContainer(scriptFile, containerName: string): (string, string, 
     "--log-driver=json-file",
     "--log-opt", "max-size=50m",
     "--log-opt", "max-file=3",
-    "-v", &"{scriptFile}:/tmp/main.nim:ro",
-    "-i", containerName,
+    "-v", &"{hostPwd}/executor/main.nim:/tmp/main.nim:ro",
+    "-i", image,
     "bash", "-c", &"sync && cd /tmp && nim c -d:release --hints:off --verbosity:0 main.nim && ./main | stdbuf -o0 head -c 100K",
     ]
-  let timeout = getEnv("SLACKBOT_NIM_REQUEST_TIMEOUT", "10").parseInt
+  let timeout = getEnv("COMMAND_TIMEOUT", "10").parseInt
   result = runCommand("docker", args, timeout)
+
+let
+  dbHost = getEnv("DB_HOST")
+  dbPort = getEnv("DB_PORT").parseUint.uint16
+  dbName = getEnv("DB_DBNAME")
+  user = getEnv("DB_USER")
+  pass = getEnv("DB_PASSWORD")
+
+info "start executor"
+var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
+let
+  collCode = db["code"]
+  collLog = db["log"]
+  query = bson.`%*`({"compiler": "stable"})
+  n = bson.`%*`({})
 
 while true:
   sleep 500
 
-  if not existsFile(paramFile):
+  let reply = waitFor collCode.findAndModify(query, n, n, false, false, remove=true)
+  var record = reply.bson["value"]
+  if record.kind == BsonKindNull:
+    continue
+  record["created_at"] = ($now()).toBson()
+  let reply2 = collLog.insert(record)
+  if not reply2.ok:
+    error "error"
     continue
 
+  let scriptFile = "."/"executor"/"main.nim"
   try:
     let
-      obj = readFile(paramFile).parseJson
-      userId = obj["userId"].getStr
-      code = obj["code"].getStr
-      tag = obj["compiler"].getStr
-      image = &"jiro4989/nimbot/runtime:{tag}"
+      userId = record["userId"].toString
+      code = record["code"].toString
+      compiler = record["compiler"].toString
+      image = &"jiro4989/nimbot:compiler-{compiler}"
+    info &"start executer: userID={userId} code={code} image={image}"
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
     info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
@@ -90,13 +114,15 @@ while true:
       "*stdout:*", "```", stdout, "```",
       "*stderr:*", "```", stderr, "```",
     ].join("\n")
-    let body = %*{ "text":rawBody }
+    let body = json.`%*`({ "text":rawBody })
 
-    let url = os.getEnv("NIMBOT_EXECUTOR_SLACK_URL")
+    info "post to slack"
+    let url = os.getEnv("SLACK_URL")
     var client = newHttpClient()
-    discard client.post(url, $body)
+    let resp = client.post(url, $body)
+    info resp[]
+    info "finish executer:"
   except:
     error getCurrentExceptionMsg()
   finally:
-    removeFile(paramFile)
     removeFile(scriptFile)

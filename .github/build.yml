@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: ./build/server/Dockerfile
+      target: runtime
+    image: jiro4989/nimbot:server-runtime
+
+  executor:
+    build:
+      context: ..
+      dockerfile: ./build/executor/Dockerfile
+      target: runtime
+    image: jiro4989/nimbot:executor-runtime
+
+  fluentd:
+    build:
+      context: ..
+      dockerfile: ./build/fluentd/Dockerfile
+    image: jiro4989/nimbot:fluentd-runtime

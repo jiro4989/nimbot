@@ -1,10 +1,10 @@
-import asyncdispatch, httpClient, json, os, strutils, sequtils
+import asyncdispatch, httpClient, json, os, strutils, sequtils, logging, times
 from uri import decodeUrl
 from strformat import `&`
 
-import jester
+import jester, nimongo/bson, nimongo/mongo
 
-import private/common
+addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname ", useStderr = true))
 
 const
   helpMsg = """
@@ -40,53 +40,77 @@ proc getCodeBlock(raw: string): string =
 
 router myrouter:
   post "/play":
-    if existsFile(scriptFile):
-      resp %*{"status":"other user is using. wait a second."}
-      return
-
     let
       param = request.body()
+
+    info &"param={param}"
+
+    let
       paramMap = param.split("&").mapIt(it.split("="))
       text = paramMap.getParam("text")
       userName = paramMap.getParam("user_id")
       lines = text.split("\n")
 
-    echo &"param = {param}"
-    echo &"text = {text}"
+    info &"text={text}"
 
     if lines.len < 1:
-      resp %*{"status":"illegal commands. see '/nimbot help'."}
+      resp json.`%*`({"status":"illegal commands. see '/nimbot help'."})
       return
 
     let
       args = lines[0].strip.split(" ")
 
     if args[0] in ["compiler", "c"]:
-      var tag = "latest"
+      info "action=compile"
+
+      var tag = "stable"
       if 2 <= args.len:
         if args[1] == "devel":
           tag = "devel"
         else:
-          resp %*{"status": &"illegal compiler: {args[1]}"}
+          resp json.`%*`({"status": &"illegal compiler: {args[1]}"})
           return
       let
         code = text.getCodeBlock()
-        param = %*{ "userId": userName, "compiler": tag, "code": code }
-      writeFile(paramFile, $param)
-      resp %*{"status":"ok"}
+      info &"code={code}"
+
+      let
+        dbHost = getEnv("DB_HOST")
+        dbPort = getEnv("DB_PORT").parseUint.uint16
+        dbName = getEnv("DB_DBNAME")
+        user = getEnv("DB_USER")
+        pass = getEnv("DB_PASSWORD")
+
+      var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
+      let now = now()
+      let
+        collection = db["code"]
+        record = bson.`%*`({
+          "userId": userName,
+          "compiler": tag,
+          "code": code,
+          "created_at": $now,
+          })
+        reply = collection.insert(record)
+      info &"ok={reply.ok} count={reply.n}"
+      if reply.ok:
+        resp json.`%*`({"status":"ok"})
+      else:
+        resp json.`%*`({"status":"ng"})
       return
 
     if args[0] in ["help", "h"]:
       resp helpMsg.strip
       return
 
-    resp %*{"status":"not supported"}
+    info "finish server:"
+    resp json.`%*`({"status":"not supported"})
 
   get "/ping":
-    resp %*{"status":"ok"}
+    resp json.`%*`({"status":"ok"})
 
 proc main =
-  var port = getEnv("NIMBOT_SERVER_PORT", "1234").parseInt().Port
+  var port = getEnv("PORT", "1234").parseInt().Port
   var settings = newSettings(port = port)
   var jester = initJester(myrouter, settings = settings)
   jester.serve()

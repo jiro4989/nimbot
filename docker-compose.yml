@@ -1,0 +1,95 @@
+version: "3.7"
+
+services:
+  server:
+    image: nimlang/nim:1.0.6-ubuntu
+    restart: on-failure
+    environment: &app-env
+      PORT: '4001'
+      DB_HOST: db
+      DB_PORT: '27017'
+      DB_DBNAME: nimbot
+      DB_USER: writer
+      DB_PASSWORD: password
+    volumes:
+      - "./nimbot_server:/work"
+      - "./entrypoint.sh:/entrypoint.sh"
+      - "./volume/server/cache:/root/.cache/nim"
+      - "./volume/server/nimble:/root/.nimble"
+    working_dir: /work
+    ports:
+      - 4001:4001
+    depends_on:
+      - db
+      - executor
+      - fluentd
+    logging: &logging
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "log.{{.Name}}"
+    entrypoint: "/entrypoint.sh nimbot_server"
+
+  executor:
+    build:
+      context: ./build/executor
+      dockerfile: Dockerfile
+      target: base
+    image: jiro4989/nimbot/executor
+    restart: on-failure
+    environment:
+      <<: *app-env
+      SLACK_URL: "http://slack_mock"
+    volumes:
+      - "./nimbot_executor:/work"
+      - "./entrypoint.sh:/entrypoint.sh"
+      - "./volume/executor/cache:/root/.cache/nim"
+      - "./volume/executor/nimble:/root/.nimble"
+      - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
+    working_dir: /work
+    depends_on:
+      - db
+      - slack_mock
+      - fluentd
+    entrypoint: "/entrypoint.sh nimbot_executor"
+    logging: *logging
+
+  db:
+    image: mongo:3.6
+    restart: on-failure
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: nimbot
+    expose:
+      - "27017"
+    ports:
+      - 27017:27017
+    volumes:
+      - ./volume/db/db:/data/db
+      - ./volume/db/configdb:/data/configdb
+      - ./volume/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    logging: *logging
+    depends_on:
+      - fluentd
+
+  slack_mock:
+    image: nginx:1.17
+    expose:
+      - "80"
+      - "443"
+    logging: *logging
+    depends_on:
+      - fluentd
+
+  fluentd:
+    build:
+      context: .
+      dockerfile: ./build/fluentd/Dockerfile
+    image: jiro4989/nimbot:fluentd
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    volumes:
+      - "./volume/fluentd/log:/var/log/nimbot"
+      - "./conf/fluentd:/fluentd/etc"

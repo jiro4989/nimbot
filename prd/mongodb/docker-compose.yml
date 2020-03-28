@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+
+  mongodb:
+    image: mongo:3.6
+    container_name: mongodb
+    restart: on-failure
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      TZ: Asia/Tokyo
+    expose:
+      - "27017"
+    ports:
+      - 27017:27017
+    volumes:
+      # NOTE: 毎回作り直せばいいからvolumeしない
+      # - ./volume/db/db:/data/db
+      # - ./volume/db/configdb:/data/configdb
+      - ../../conf/mongodb/init.sh:/docker-entrypoint-initdb.d/init.sh
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "log.{{.Name}}"

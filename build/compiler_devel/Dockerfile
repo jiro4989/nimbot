@@ -22,5 +22,3 @@ RUN nimble install -Y \
 
 RUN nim --version && \
     nimble --version
-
-# vim: ft=dockerfile:
