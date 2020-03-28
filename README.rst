@@ -137,6 +137,16 @@ masterブランチが更新されるとCIが起動します。
 CIで本番用のDockerイメージをビルドして、DockerHubにPushします。
 本番環境では ``docker pull`` してイメージを更新します。
 
+Pull Request
+============
+
+Welcome!
+
+LICENSE
+=======
+
+MIT
+
 脚注
 ====
 
@@ -148,12 +158,3 @@ CIで本番用のDockerイメージをビルドして、DockerHubにPushしま�
 .. |image-data-flow| image:: ./docs/data_flow.svg
 .. |image-system| image:: ./docs/system.svg
 
-Pull Request
-============
-
-Welcome!
-
-LICENSE
-=======
-
-MIT
