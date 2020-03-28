@@ -130,6 +130,13 @@ Nimコンパイラをインストールしているなら、以下のコマン�
 
    nim --hints:off tests
 
+デプロイ方法
+------------
+
+masterブランチが更新されるとCIが起動します。
+CIで本番用のDockerイメージをビルドして、DockerHubにPushします。
+本番環境では ``docker pull`` してイメージを更新します。
+
 脚注
 ====
 
@@ -141,3 +148,12 @@ Nimコンパイラをインストールしているなら、以下のコマン�
 .. |image-data-flow| image:: ./docs/data_flow.svg
 .. |image-system| image:: ./docs/system.svg
 
+Pull Request
+============
+
+Welcome!
+
+LICENSE
+=======
+
+MIT
