@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="572px" preserveAspectRatio="none" style="width:626px;height:572px;" version="1.1" viewBox="0 0 626 572" width="626px" zoomAndPan="magnify"><defs><filter height="300%" id="f1fau0gc5448os" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[d68938b5b2bd3b59274d2bc51f3dfcaf]
+cluster Port--><rect fill="#FFFFFF" filter="url(#f1fau0gc5448os)" height="80" style="stroke: #000000; stroke-width: 1.5;" width="90" x="369" y="152"/><path d="M412,153 L412,161.2969 L402,171.2969 L369,171.2969 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="33" x="372" y="165.9951">Port</text><!--MD5=[42591781c74864aa6bd8b9830e23a81c]
+cluster Docker--><polygon fill="#FFFFFF" filter="url(#f1fau0gc5448os)" points="22,275,32,265,495,265,495,550,485,560,22,560,22,275" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="485" x2="494" y1="275" y2="266"/><line style="stroke: #000000; stroke-width: 1.5;" x1="22" x2="485" y1="275" y2="275"/><line style="stroke: #000000; stroke-width: 1.5;" x1="485" x2="485" y1="275" y2="560"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="56" x="226.5" y="290.9951">Docker</text><ellipse cx="413.9558" cy="201.5236" fill="#FEFECE" filter="url(#f1fau0gc5448os)" rx="28.4558" ry="14.5236" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="36" x="395.9558" y="206.1721">4001</text><!--MD5=[dd82451e1dd92fe3da01853750f49ff6]
+entity server--><rect fill="#FEFECE" filter="url(#f1fau0gc5448os)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="118" x="355" y="305"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="350" y="310"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="350" y="331.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="98" x="365" y="327.9951">nimbot_server</text><!--MD5=[dc02bfe39f67a9a5aa9e012366714432]
+entity exec--><rect fill="#FEFECE" filter="url(#f1fau0gc5448os)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="136" x="128" y="305"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="123" y="310"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="123" y="331.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="116" x="138" y="327.9951">nimbot_executor</text><!--MD5=[30ba7fb1050e29c0f3290b9e87c281e8]
+entity log--><rect fill="#FEFECE" filter="url(#f1fau0gc5448os)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="77" x="191.5" y="508"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="186.5" y="513"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="186.5" y="534.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="57" x="201.5" y="530.9951">fluented</text><!--MD5=[f548477e9e9608815eb6d3961b9094bc]
+entity nim--><rect fill="#FEFECE" filter="url(#f1fau0gc5448os)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="109" x="208.5" y="406.5"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="203.5" y="411.5"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="203.5" y="432.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="89" x="218.5" y="429.4951">nim-compiler</text><!--MD5=[1acd0941b5b56b296e5c71dcb3bd5fd0]
+entity mock--><rect fill="#FEFECE" filter="url(#f1fau0gc5448os)" height="36.2969" style="stroke: #A80036; stroke-width: 1.5;" width="98" x="38" y="406.5"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="33" y="411.5"/><rect fill="#FEFECE" height="5" style="stroke: #A80036; stroke-width: 1.5;" width="10" x="33" y="432.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="78" x="48" y="429.4951">slack-mock</text><!--MD5=[7468467f3b6b392f1d176d828c753b77]
+entity db--><path d="M352.5,412 C352.5,402 397,402 397,402 C397,402 441.5,402 441.5,412 L441.5,437.2969 C441.5,447.2969 397,447.2969 397,447.2969 C397,447.2969 352.5,447.2969 352.5,437.2969 L352.5,412 " fill="#FEFECE" filter="url(#f1fau0gc5448os)" style="stroke: #000000; stroke-width: 1.5;"/><path d="M352.5,412 C352.5,422 397,422 397,422 C397,422 441.5,422 441.5,412 " fill="none" style="stroke: #000000; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="69" x="362.5" y="438.9951">MongoDB</text><!--MD5=[3d99d59a27ec55cd9b0b1490801f78bc]
+entity dev--><ellipse cx="414" cy="17.5" fill="#FEFECE" filter="url(#f1fau0gc5448os)" rx="8" ry="8" style="stroke: #A80036; stroke-width: 1.5;"/><path d="M414,25.5 L414,52.5 M401,33.5 L427,33.5 M414,52.5 L401,67.5 M414,52.5 L427,67.5 " fill="none" filter="url(#f1fau0gc5448os)" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="71" x="378.5" y="85.9951">Developer</text><!--MD5=[c1e61a03c8969d8a9f9253602e6f3475]
+link dev to 4001--><path d="M414,89.173 C414,118.943 414,158.386 414,181.449 " fill="none" id="dev-&gt;4001" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="414,186.666,418,177.666,414,181.666,410,177.666,414,186.666" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="199" x="415" y="132.0669">POST http://localhost:4001/paly</text><!--MD5=[2e2d12c32f74406d890b4030567fa1ed]
+link 4001 to server--><path d="M414,216.208 C414,236.584 414,275.085 414,299.594 " fill="none" id="4001-&gt;server" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="414,304.6,418,295.6,414,299.6,410,295.6,414,304.6" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[2927d3a781a947e921db6647bd449b94]
+link server to db--><path d="M411.039,341.332 C408.435,356.57 404.604,378.996 401.601,396.571 " fill="none" id="server-&gt;db" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="400.698,401.856,406.1556,393.6575,401.5394,396.9273,398.2697,392.3112,400.698,401.856" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[06916c9caed5613797fa9c63f2ec3a1b]
+link exec to db--><path d="M230.553,341.105 C263.102,357.217 312.173,381.508 348.61,399.546 " fill="none" id="exec-&gt;db" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="353.439,401.936,347.1489,394.3574,348.9583,399.7171,343.5987,401.5265,353.439,401.936" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[87ca9c9af907541912a8e1b15a0bba2b]
+link exec to nim--><path d="M207.671,341.332 C219.007,358.167 236.251,383.776 248.471,401.924 " fill="none" id="exec-&gt;nim" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="251.463,406.367,249.7535,396.6676,248.6701,402.2198,243.118,401.1363,251.463,406.367" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[cd3a67824ada186940690a78b498f711]
+link exec to mock--><path d="M177.014,341.332 C158.258,358.453 129.563,384.647 109.632,402.84 " fill="none" id="exec-&gt;mock" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="105.7688,406.367,115.113,403.2549,109.4621,402.9966,109.7204,397.3456,105.7688,406.367" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[2466a58aead21a6a305c2d4ae5e4015a]
+link server to log--><path d="M429.842,341.285 C450.898,366.43 482.823,413.719 459,447 C416.845,505.8911 327.579,520.8358 273.795,524.3175 " fill="none" id="server-&gt;log" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="268.704,524.6197,277.9258,528.0778,273.6952,524.3226,277.4504,520.0919,268.704,524.6197" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[2d412e9cc16b7e9eb60ca4046b799904]
+link exec to log--><path d="M192.382,341.393 C188.026,365.478 182.309,410.184 191,447 C195.792,467.298 206.719,488.3353 215.791,503.4397 " fill="none" id="exec-&gt;log" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="218.538,507.9295,217.2518,498.165,215.928,503.6648,210.4282,502.341,218.538,507.9295" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[6c29cee941dd9a9b9c455a474252eb25]
+link db to log--><path d="M360.763,447.09 C331.716,464.397 291.29,488.4829 263.104,505.2764 " fill="none" id="db-&gt;log" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="258.689,507.9068,268.4682,506.7375,262.9846,505.348,264.3741,499.8645,258.689,507.9068" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[b82f5d540075ab9dd3a4b2abda90700d]
+link mock to log--><path d="M111.583,442.605 C136.445,459.904 174.858,486.6321 201.148,504.9248 " fill="none" id="mock-&gt;log" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="205.26,507.7856,200.1569,499.3619,201.1557,504.9299,195.5878,505.9288,205.26,507.7856" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[d6cc177969275042138b38e6d94b45d4]
+@startuml
+actor Developer as dev
+
+frame "Port" {
+    (4001)
+}
+
+node "Docker" {
+    [nimbot_server] as server
+    [nimbot_executor] as exec
+    [fluented] as log
+    [nim-compiler] as nim
+    [slack-mock] as mock
+    database MongoDB as db
+}
+
+dev -down-> (4001) : POST http://localhost:4001/paly
+(4001) -down-> server
+server -down-> db
+exec -down-> db
+exec -down-> nim
+exec -down-> mock
+
+server -down-> log
+exec -down-> log
+db -down-> log
+mock -down-> log
+@enduml
+
+PlantUML version 1.2020.03beta11(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Java Version: 1.7.0_25-b15
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

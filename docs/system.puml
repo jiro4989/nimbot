@@ -1,0 +1,29 @@
+@startuml system
+actor Developer as dev
+
+frame "Port" {
+    (4001)
+}
+
+node "Docker" {
+    [nimbot_server] as server
+    [nimbot_executor] as exec
+    [fluented] as log
+    [nim-compiler] as nim
+    [slack-mock] as mock
+    database MongoDB as db
+}
+
+dev -down-> (4001) : POST http://localhost:4001/paly
+(4001) -down-> server
+server -down-> db
+exec -down-> db
+exec -down-> nim
+exec -down-> mock
+
+server -down-> log
+exec -down-> log
+db -down-> log
+mock -down-> log
+
+@enduml

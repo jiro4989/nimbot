@@ -56,6 +56,13 @@ Slackのコードブロック記法内に、任意の Nim のコードを記載�
 
 * `direnv <https://github.com/direnv/direnv>`_
 
+システム構成図
+--------------
+
+ローカル環境のシステム構成は以下。
+
+|image-system|
+
 処理フロー
 ----------
 
@@ -131,5 +138,6 @@ Nimコンパイラをインストールしているなら、以下のコマン�
 .. [Incoming-Webhook] 任意のSlackチャンネルにデータを送信するためのWebhook (`Link <https://slack.com/intl/ja-jp/help/articles/115005265063>`_)
 
 .. |image-demo-top| image:: ./docs/demo_top.png
-.. |image-data-flow| image:: ./out/docs/data_flow/data_flow.svg
+.. |image-data-flow| image:: ./docs/data_flow.svg
+.. |image-system| image:: ./docs/system.svg
 
