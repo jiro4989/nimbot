@@ -7,6 +7,8 @@ Slackのチャットメッセージを読み取ってNimのコードをコンパ
 
 |image-demo-top|
 
+.. contents:: 目次
+
 使い方
 ======
 
