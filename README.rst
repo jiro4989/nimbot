@@ -22,8 +22,8 @@ Slackの ``nimbot`` チャンネルで、チャット欄に以下のテキスト
   ```
 
 
-これは |nim| [#f1]_ のコンパイラのバージョンを出力する |nim| のコードです。
-Slackのコードブロック記法内に、任意の |nim| のコードを記載できます。
+これは Nim_ [#f1]_ のコンパイラのバージョンを出力する Nim_ のコードです。
+Slackのコードブロック記法内に、任意の Nim_ のコードを記載できます。
 
 処理フロー
 ==========
@@ -65,6 +65,7 @@ Starts for production.
 .. |image-demo-top| image:: ./docs/demo_top.png
 .. |image-data-flow| image:: ./out/docs/data_flow/data_flow.svg
 
+.. _Nim: Nim https://nim-lang.org/
 .. |nim| replace:: `Nim <https://nim-lang.org/>`_
 .. |slash-commands| replace:: `Slash Commands <https://api.slack.com/interactivity/slash-commands>`_
 .. |incoming-webhook| replace:: `Incoming Webhook <https://slack.com/intl/ja-jp/help/articles/115005265063>`_
