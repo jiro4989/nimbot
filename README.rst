@@ -22,11 +22,26 @@ Slackの ``nimbot`` チャンネルで、チャット欄に以下のテキスト
   ```
 
 
-これは [Nim]_ のコンパイラのバージョンを出力する [Nim]_ のコードです。
-Slackのコードブロック記法内に、任意の [Nim]_ のコードを記載できます。
+これは [Nim]_ のコンパイラのバージョンを出力する Nim のコードです。
+Slackのコードブロック記法内に、任意の Nim のコードを記載できます。
+
+また、以下のようにチャットを送信することで、Nim公式リポジトリの devel ブランチ最
+新のコンパイラでコードを実行することが可能です。
+
+::
+
+  /nimbot c devel
+
+  ```
+  echo NimVersion
+  ```
+
+開発
+====
+
 
 処理フロー
-==========
+----------
 
 Slackの [Slash-Commands]_ を使用してNimのコードを送信します。
 
@@ -45,26 +60,75 @@ Slackの [Slash-Commands]_ を使用してNimのコードを送信します。
 
 |image-data-flow|
 
-Usave
-=====
+前提条件
+========
+
+以下のツールが必要です。
+
+* docker
+* docker-compose
+
+このBotはNimで書かれているので、Nimのコンパイラもあったほうが良いです。
+しかしながら、Botをビルドして動作させるだけなら上記の2つだけで動作します。
+
+本番検証用には以下のツールが必要です。
+
+* `direnv <https://github.com/direnv/direnv>`_
+
+環境の操作
+==========
+
+``config.nims`` というファイルに頻出のタスクを定義しています。
+Nimコンパイラがインストールされていれば、以下のコマンドでタスクを確認できます。
 
 .. code-block:: shell
 
-   docker-compose -f compiler.yml build
+   nim --hints:off
+
+開発環境の起動
+--------------
+
+以下のコマンドを実行すると開発環境を起動します。
+
+.. code-block:: shell
+
    docker-compose up
 
+   # あるいは
 
-Starts for production.
+   nim --hints:off upDev
+
+本番検証環境の起動
+--------------
 
 .. code-block:: shell
 
-   docker-compose -f compiler.yml build
-   docker-compose -f .github/build.yml build
-   docker-compose -f docker-compose.yml -f prd.yml up
+   nim --hints:off upAll
 
-.. |image-demo-top| image:: ./docs/demo_top.png
-.. |image-data-flow| image:: ./out/docs/data_flow/data_flow.svg
+動作確認方法
+------------
+
+起動したら以下のコマンドを実行すると、Botが正常に動作していることが確認できます
+。
+
+.. code-block:: shell
+
+   curl -X POST -d 'user_id=test_user&text=ccccc' http://localhost:4001/play
+
+Nimコンパイラをインストールしているなら、以下のコマンドで正常なデータを送信でき
+ます。
+
+.. code-block:: shell
+
+   nim --hints:off tests
+
+脚注
+====
 
 .. [Nim] 効率的で、表現力豊かで、エレガントなプログラミング言語。このBotもこれで書かれている (`Link <https://nim-lang.org/>`_)
 .. [Slash-Commands] ``/`` で始まるコマンドでBotと対話的にやり取りをするためのSlackインテグレーション (`Link <https://api.slack.com/interactivity/slash-commands>`_)
 .. [Incoming-Webhook] 任意のSlackチャンネルにデータを送信するためのWebhook (`Link <https://slack.com/intl/ja-jp/help/articles/115005265063>`_)
+
+.. |image-demo-top| image:: ./docs/demo_top.png
+.. |image-data-flow| image:: ./out/docs/data_flow/data_flow.svg
+
