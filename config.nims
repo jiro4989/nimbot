@@ -5,6 +5,7 @@ let
   composePrdFluentd = "prd"/"fluentd"/composeFile
   composePrdMongoDb = "prd"/"mongodb"/composeFile
   composePrdNimbot = "prd"/"nimbot"/composeFile
+  composePrdFiles = [composePrdFluentd, composePrdMongoDb, composePrdNimbot]
 
 proc upService(compose: string) =
   exec &"docker-compose -f {compose} up -d"
@@ -27,8 +28,7 @@ task upApp, "start application":
   upService(composePrdNimbot)
 
 task status, "print status":
-  let files = [composePrdFluentd, composePrdMongoDb, composePrdNimbot]
-  for f in files:
+  for f in composePrdFiles:
     exec &"docker-compose -f {f} ps"
 
 task upAll, "start all application":
@@ -56,7 +56,8 @@ task downAll, "down all application":
   selfExec "downLog"
 
 task buildImage, "build prd images":
-  exec "docker-compose -f .github/build.yml build"
+  for f in composePrdFiles:
+    exec &"docker-compose -f {f} build"
 
 task tests, "test post":
   withDir "nimbot_server":

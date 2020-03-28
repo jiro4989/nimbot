@@ -30,21 +30,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: before
+    strategy:
+      matrix:
+        tag:
+          - server
+          - executor
+          - fluentd
     steps:
       - uses: actions/checkout@v1
       - name: Login docker
         run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
-      - name: Build compiler
-        run: docker-compose -f compiler.yml build
       - name: Build app
-        run: docker-compose -f .github/build.yml build
-      - name: Push image to docker registory
-        run: |
-          docker push ${{ env.DOCKER_REGISTORY }}:server-runtime
-          docker push ${{ env.DOCKER_REGISTORY }}:executor-runtime
-          docker push ${{ env.DOCKER_REGISTORY }}:fluentd-runtime
-          docker push ${{ env.DOCKER_REGISTORY }}:compiler-stable
-          docker push ${{ env.DOCKER_REGISTORY }}:compiler-devel
+        run: docker build --no-cache --tag ${{ env.DOCKER_REGISTORY }}:${{ matrix.tag }}-runtime -f ./build/${{ matrix.tag }}/Dockerfile .
+      - name: Docker push
+        run: docker push ${{ env.DOCKER_REGISTORY }}:${{ matrix.tag }}-runtime
+        if: github.ref == 'refs/heads/master'
 
       # - name: Check apps
       #   run: ls -lah bin/
@@ -73,46 +73,46 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: build
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: app
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: app/${{ env.APP_NAME }}.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # # NOTE: ちょっと時間かかるけれど、一旦はここでビルドする
-      # - uses: actions/checkout@v1
-      # - name: Build images latest
-      #   run: docker build -f Dockerfile -t ${{ env.IMAGE }}:latest .
-      # - name: Build images devel
-      #   run: docker build -f Dockerfile_devel -t ${{ env.IMAGE }}:devel .
-      # - name: Release docker images
-      #   run: |
-      #     mkdir -p dist/dockerimage
-      #     docker save ${{ env.IMAGE }}:latest -o dist/dockerimage/latest.tar
-      #     docker save ${{ env.IMAGE }}:devel -o dist/dockerimage/devel.tar
-      #     pushd dist
-      #     tar czf dockerimage.tar.gz dockerimage
-      #     popd
-      #     ls -lah dist
-      # - name: Release docker image
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     files: dist/dockerimage.tar.gz
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deploy app
-        run: curl -X POST -H "${{ env.HEADER }}" -d '${{ env.BODY }}' ${{ secrets.DEPLOY_URL }}
-        env:
-          HEADER: "Content-Type: application/json"
-          BODY: '{"text": "sushi"}'
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.ref, 'refs/tags/')
+  #   needs: build
+  #   steps:
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v1
+  #       with:
+  #         name: app
+  #     - name: Release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         files: app/${{ env.APP_NAME }}.tar.gz
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #     # # NOTE: ちょっと時間かかるけれど、一旦はここでビルドする
+  #     # - uses: actions/checkout@v1
+  #     # - name: Build images latest
+  #     #   run: docker build -f Dockerfile -t ${{ env.IMAGE }}:latest .
+  #     # - name: Build images devel
+  #     #   run: docker build -f Dockerfile_devel -t ${{ env.IMAGE }}:devel .
+  #     # - name: Release docker images
+  #     #   run: |
+  #     #     mkdir -p dist/dockerimage
+  #     #     docker save ${{ env.IMAGE }}:latest -o dist/dockerimage/latest.tar
+  #     #     docker save ${{ env.IMAGE }}:devel -o dist/dockerimage/devel.tar
+  #     #     pushd dist
+  #     #     tar czf dockerimage.tar.gz dockerimage
+  #     #     popd
+  #     #     ls -lah dist
+  #     # - name: Release docker image
+  #     #   uses: softprops/action-gh-release@v1
+  #     #   with:
+  #     #     files: dist/dockerimage.tar.gz
+  #     #   env:
+  #     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #     - name: Deploy app
+  #       run: curl -X POST -H "${{ env.HEADER }}" -d '${{ env.BODY }}' ${{ secrets.DEPLOY_URL }}
+  #       env:
+  #         HEADER: "Content-Type: application/json"
+  #         BODY: '{"text": "sushi"}'
