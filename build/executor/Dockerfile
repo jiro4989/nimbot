@@ -26,5 +26,10 @@ RUN cd /work && nimble install -Y
 
 FROM docker:19.03-dind AS runtime
 
+RUN apk add --update --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+    echo "Asia/Tokyo" > /etc/timezone && \
+    apk del tzdata
+
 COPY --from=builder /root/.nimble/bin/nimbot_executor /usr/local/bin/nimbot_executor
 ENTRYPOINT ["/usr/local/bin/nimbot_executor"]
