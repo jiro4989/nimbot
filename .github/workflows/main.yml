@@ -46,24 +46,6 @@ jobs:
         run: docker push ${{ env.DOCKER_REGISTORY }}:${{ matrix.tag }}-runtime
         if: github.ref == 'refs/heads/master'
 
-      # - name: Check apps
-      #   run: ls -lah bin/
-      # - name: Archive release files
-      #   run: |
-      #     mkdir -p dist/${{ env.APP_NAME }}
-      #     cp -r bin dist/${{ env.APP_NAME }}
-      #     git describe --tags --abbrev=0 > dist/${{ env.APP_NAME }}/tag.txt
-      #     pushd dist
-      #     tar czf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
-      #     popd
-      #     ls -lah dist/${{ env.APP_NAME }}.tar.gz
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v1
-      #   with:
-      #     name: app
-      #     path: dist/${{ env.APP_NAME }}.tar.gz
-      #   if: startsWith(github.ref, 'refs/tags/')
-
   create-tag-draft:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -73,46 +55,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   if: startsWith(github.ref, 'refs/tags/')
-  #   needs: build
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v1
-  #       with:
-  #         name: app
-  #     - name: Release
-  #       uses: softprops/action-gh-release@v1
-  #       with:
-  #         files: app/${{ env.APP_NAME }}.tar.gz
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #
-  #     # # NOTE: ちょっと時間かかるけれど、一旦はここでビルドする
-  #     # - uses: actions/checkout@v1
-  #     # - name: Build images latest
-  #     #   run: docker build -f Dockerfile -t ${{ env.IMAGE }}:latest .
-  #     # - name: Build images devel
-  #     #   run: docker build -f Dockerfile_devel -t ${{ env.IMAGE }}:devel .
-  #     # - name: Release docker images
-  #     #   run: |
-  #     #     mkdir -p dist/dockerimage
-  #     #     docker save ${{ env.IMAGE }}:latest -o dist/dockerimage/latest.tar
-  #     #     docker save ${{ env.IMAGE }}:devel -o dist/dockerimage/devel.tar
-  #     #     pushd dist
-  #     #     tar czf dockerimage.tar.gz dockerimage
-  #     #     popd
-  #     #     ls -lah dist
-  #     # - name: Release docker image
-  #     #   uses: softprops/action-gh-release@v1
-  #     #   with:
-  #     #     files: dist/dockerimage.tar.gz
-  #     #   env:
-  #     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #
-  #     - name: Deploy app
-  #       run: curl -X POST -H "${{ env.HEADER }}" -d '${{ env.BODY }}' ${{ secrets.DEPLOY_URL }}
-  #       env:
-  #         HEADER: "Content-Type: application/json"
-  #         BODY: '{"text": "sushi"}'
+  deploy:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    steps:
+      - name: Deploy
+        run: curl -X POST -H "${{ env.HEADER }}" -d '${{ env.BODY }}' ${{ secrets.DEPLOY_URL }}
+        env:
+          HEADER: "Content-Type: application/json"
+          BODY: '{"text": "sushi"}'
