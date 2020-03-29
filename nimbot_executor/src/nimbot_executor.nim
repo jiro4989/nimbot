@@ -80,7 +80,7 @@ var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
 let
   collCode = db["code"]
   collLog = db["log"]
-  query = bson.`%*`({"compiler": "stable"})
+  query = bson.`%*`({})
   n = bson.`%*`({})
 
 while true:
