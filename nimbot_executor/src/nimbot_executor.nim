@@ -106,7 +106,10 @@ while true:
     info &"start executer: userID={userId} code={code} image={image}"
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
-    info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
+    let
+      onelineStdout = stdout.replace("\n", "\\n")
+      onelineStderr = stderr.replace("\n", "\\n")
+    info &"code={code} stdout={onelineStdout} stderr={onelineStderr} exitCode={exitCode} msg={msg}"
 
     let rawBody = @[
       &"<@{userId}>",

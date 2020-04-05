@@ -72,7 +72,8 @@ router myrouter:
           return
       let
         code = text.getCodeBlock()
-      info &"code={code}"
+        onelineCode = code.replace("\n", "\\n")
+      info &"code={onelineCode}"
 
       let
         dbHost = getEnv("DB_HOST")
@@ -103,7 +104,7 @@ router myrouter:
       resp helpMsg.strip
       return
 
-    info "finish server:"
+    info "finish server"
     resp json.`%*`({"status":"not supported"})
 
   get "/ping":
