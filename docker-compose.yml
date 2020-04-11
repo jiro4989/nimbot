@@ -1,6 +1,7 @@
 version: "3.7"
 
 services:
+  # Server
   server:
     image: nimlang/nim:1.0.6-ubuntu
     restart: on-failure
@@ -30,6 +31,7 @@ services:
         tag: "log.{{.Name}}"
     entrypoint: "/entrypoint.sh nimbot_server"
 
+  # Executor
   executor:
     build:
       context: ./build/executor

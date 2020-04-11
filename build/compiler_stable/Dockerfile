@@ -1,4 +1,4 @@
-FROM nimlang/nim:1.0.6-ubuntu
+FROM nimlang/nim:1.2.0-ubuntu
 
 RUN nimble install -Y \
            jester \
