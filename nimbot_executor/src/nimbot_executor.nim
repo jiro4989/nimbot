@@ -12,7 +12,12 @@ const
 
 proc readStream(strm: var Stream): string =
   defer: strm.close()
-  result = strm.readAll()
+  var i: int
+  while (not strm.atEnd) and i < 20:
+    let line = strm.readLine()
+    result.add(line)
+    result.add("\n")
+    inc i
 
 proc runCommand(command: string, args: openArray[string], timeout: int = 3): (string, string, int, string) =
   ## ``command`` を実行し、標準出力と標準エラー出力を返す。
