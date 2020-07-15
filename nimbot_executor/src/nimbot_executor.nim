@@ -18,6 +18,9 @@ proc readStream(strm: var Stream): string =
     result.add(line)
     result.add("\n")
     inc i
+  const b100k = 100 * 1024
+  if b100k < result.len:
+    result = result[0 ..< b100k]
 
 proc runCommand(command: string, args: openArray[string], timeout: int = 3): (string, string, int, string) =
   ## ``command`` を実行し、標準出力と標準エラー出力を返す。
