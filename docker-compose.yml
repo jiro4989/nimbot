@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   # Server
-  server:
+  nimbot_server:
     image: nimlang/nim:1.0.6-ubuntu
     restart: on-failure
     environment: &app-env
@@ -22,11 +22,11 @@ services:
       - 4001:4001
     depends_on:
       - mongodb
-      - executor
+      - nimbot_executor
     entrypoint: "/entrypoint.sh nimbot_server"
 
   # Executor
-  executor:
+  nimbot_executor:
     build:
       context: ./build/executor
       dockerfile: Dockerfile
