@@ -23,12 +23,6 @@ services:
     depends_on:
       - mongodb
       - executor
-      - fluentd
-    logging: &logging
-      driver: "fluentd"
-      options:
-        fluentd-address: "localhost:24224"
-        tag: "log.{{.Name}}"
     entrypoint: "/entrypoint.sh nimbot_server"
 
   # Executor
@@ -52,9 +46,7 @@ services:
     depends_on:
       - mongodb
       - slack_mock
-      - fluentd
     entrypoint: "/entrypoint.sh nimbot_executor"
-    logging: *logging
 
   mongodb:
     image: mongo:3.6
@@ -69,27 +61,9 @@ services:
       - 27017:27017
     volumes:
       - ./conf/mongodb/init.sh:/docker-entrypoint-initdb.d/init.sh
-    logging: *logging
-    depends_on:
-      - fluentd
 
   slack_mock:
     image: nginx:1.17
     expose:
       - "80"
       - "443"
-    logging: *logging
-    depends_on:
-      - fluentd
-
-  fluentd:
-    build:
-      context: .
-      dockerfile: ./build/fluentd/Dockerfile
-    image: jiro4989/nimbot:fluentd
-    ports:
-      - 24224:24224
-      - 24224:24224/udp
-    volumes:
-      - "./volume/fluentd/log:/var/log/nimbot"
-      - "./conf/fluentd:/fluentd/etc"
