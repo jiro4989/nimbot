@@ -1,9 +1,7 @@
-import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, logging, times
+import asyncdispatch, httpClient, json, os, osproc, strutils, strformat, streams, times
 from strformat import `&`
 
 import nimongo/bson, nimongo/mongo
-
-addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname ", useStderr = true))
 
 const
   statusOk = 0
@@ -83,7 +81,7 @@ let
   user = getEnv("DB_USER")
   pass = getEnv("DB_PASSWORD")
 
-info "start executor"
+echo json.`%*`({"level":"info", "msg":"executor begin"})
 var db = newMongoDatabase(&"mongodb://{user}:{pass}@{dbHost}:{dbPort}/{dbName}")
 let
   collCode = db["code"]
@@ -101,7 +99,7 @@ while true:
   record["created_at"] = ($now()).toBson()
   let reply2 = collLog.insert(record)
   if not reply2.ok:
-    error "error"
+    echo json.`%*`({"level":"error", "msg":"insert record error"})
     continue
 
   let scriptFile = "."/"executor"/"main.nim"
@@ -111,10 +109,10 @@ while true:
       code = record["code"].toString
       compiler = record["compiler"].toString
       image = &"jiro4989/nimbot:compiler-{compiler}"
-    info &"start executer: userID={userId} code={code} image={image}"
+    echo json.`%*`({"level":"info", "msg":"runs executor container", "user_id":userId, "code":code, "image":image})
     writeFile(scriptFile, code)
     let (stdout, stderr, exitCode, msg) = runCommandOnContainer(scriptFile, image)
-    info &"code={code} stdout={stdout} stderr={stderr} exitCode={exitCode} msg={msg}"
+    echo json.`%*`({"level":"info", "msg":msg, "user_id":userId, "code":code, "image":image, "exit_code":exitCode})
 
     let rawBody = @[
       &"<@{userId}>",
@@ -124,13 +122,13 @@ while true:
     ].join("\n")
     let body = json.`%*`({ "text":rawBody })
 
-    info "post to slack"
+    echo json.`%*`({"level":"info", "msg":"POST to slack"})
     let url = os.getEnv("SLACK_URL")
     var client = newHttpClient()
     let resp = client.post(url, $body)
-    info resp[]
-    info "finish executer:"
+    echo json.`%*`({"level":"info", "msg":"POST end"})
+    echo json.`%*`({"level":"info", "msg":"executor end"})
   except:
-    error getCurrentExceptionMsg()
+    echo json.`%*`({"level":"error", "msg":getCurrentExceptionMsg()})
   finally:
     removeFile(scriptFile)

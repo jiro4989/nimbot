@@ -1,10 +1,8 @@
-import asyncdispatch, httpClient, json, os, strutils, sequtils, logging, times
+import asyncdispatch, httpClient, json, os, strutils, sequtils, times
 from uri import decodeUrl
 from strformat import `&`
 
 import jester, nimongo/bson, nimongo/mongo
-
-addHandler(newConsoleLogger(lvlInfo, fmtStr = "$levelname ", useStderr = true))
 
 const
   helpMsg = """
@@ -43,7 +41,7 @@ router myrouter:
     let
       param = request.body()
 
-    info &"param={param}"
+    echo json.`%*`({"level":"info", "param":param, "msg":"request begin"})
 
     let
       paramMap = param.split("&").mapIt(it.split("="))
@@ -51,7 +49,7 @@ router myrouter:
       userName = paramMap.getParam("user_id")
       lines = text.split("\n")
 
-    info &"text={text}"
+    echo json.`%*`({"level":"info", "msg":"code: " & text})
 
     if lines.len < 1:
       resp json.`%*`({"status":"illegal commands. see '/nimbot help'."})
@@ -61,7 +59,7 @@ router myrouter:
       args = lines[0].strip.split(" ")
 
     if args[0] in ["compiler", "c"]:
-      info "action=compile"
+      echo json.`%*`({"level":"info", "msg":"runs compile action"})
 
       var tag = "stable"
       if 2 <= args.len:
@@ -72,7 +70,7 @@ router myrouter:
           return
       let
         code = text.getCodeBlock()
-      info &"code={code}"
+      echo json.`%*`({"level":"info", "code":code})
 
       let
         dbHost = getEnv("DB_HOST")
@@ -92,7 +90,7 @@ router myrouter:
           "created_at": $now,
           })
         reply = collection.insert(record)
-      info &"ok={reply.ok} count={reply.n}"
+      echo json.`%*`({"level":"info", "msg":"request end", "ok":reply.ok, "count":reply.n})
       if reply.ok:
         resp json.`%*`({"status":"ok"})
       else:
@@ -103,7 +101,7 @@ router myrouter:
       resp helpMsg.strip
       return
 
-    info "finish server:"
+    echo json.`%*`({"level":"info", "msg":"finish server"})
     resp json.`%*`({"status":"not supported"})
 
   get "/ping":
