@@ -41,7 +41,7 @@ router myrouter:
     let
       param = request.body()
 
-    echo json.`%*`({"level":"info", "param":param, "msg":"request begin"})
+    echo json.`%*`({"level":"info", "msg":"request begin"})
 
     let
       paramMap = param.split("&").mapIt(it.split("="))
