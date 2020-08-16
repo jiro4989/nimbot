@@ -30,7 +30,6 @@ jobs:
         tag:
           - server
           - executor
-          - fluentd
     steps:
       - uses: actions/checkout@v1
       - name: Login docker

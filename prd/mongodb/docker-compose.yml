@@ -1,7 +1,6 @@
 version: "3.7"
 
 services:
-
   mongodb:
     image: mongo:3.6
     container_name: mongodb
@@ -19,8 +18,3 @@ services:
       # - ./volume/db/db:/data/db
       # - ./volume/db/configdb:/data/configdb
       - ../../conf/mongodb/init.sh:/docker-entrypoint-initdb.d/init.sh
-    logging:
-      driver: "fluentd"
-      options:
-        fluentd-address: "localhost:24224"
-        tag: "log.{{.Name}}"

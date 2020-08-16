@@ -19,11 +19,6 @@ services:
       - 4001:4001
     depends_on:
       - executor
-    logging: &logging
-      driver: "fluentd"
-      options:
-        fluentd-address: "localhost:24224"
-        tag: "log.{{.Name}}"
     networks: &network
       - back
       - mongodb_default
@@ -43,7 +38,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # docker out of docker
       - "./executor:/executor"
-    logging: *logging
     networks: *network
     entrypoint: "/usr/local/bin/nimbot_executor"
 
@@ -55,7 +49,6 @@ services:
       - "443"
     networks:
       - back
-    logging: *logging
 
 networks:
   back:
